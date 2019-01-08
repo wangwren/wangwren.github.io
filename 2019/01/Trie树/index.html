@@ -91,20 +91,20 @@
 <meta property="og:site_name" content="计科一班">
 <meta property="og:description" content="Trie树什么是Trie树Trie树，也叫字典树。它是一个树形结构。专门处理字符串匹配的数据结构，用来解决字符串集合中快速查找某个字符串的问题。 这样一个问题可以有多种解决方法，比如散列表、红黑树或者字符串匹配算法，但是Trie树在这个问题的解决上有特有的特点。 现在有6个字符串，分别是:how，hi，her，hello，so，see。如果每次查找，都是拿要查找的字符串跟这6个字符串依次进行字符串">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://yoursite.com/2019/01/Trie树/github上项目/hexo/source/_posts/Trie树/1.png">
-<meta property="og:image" content="http://yoursite.com/2019/01/Trie树/github上项目/hexo/source/_posts/Trie树/2.png">
-<meta property="og:image" content="http://yoursite.com/2019/01/Trie树/github上项目/hexo/source/_posts/Trie树/3.png">
-<meta property="og:image" content="http://yoursite.com/2019/01/Trie树/github上项目/hexo/source/_posts/Trie树/4.png">
-<meta property="og:image" content="http://yoursite.com/2019/01/Trie树/github上项目/hexo/source/_posts/Trie树/5.png">
-<meta property="og:image" content="http://yoursite.com/2019/01/Trie树/github上项目/hexo/source/_posts/Trie树/6.png">
-<meta property="og:image" content="http://yoursite.com/2019/01/Trie树/github上项目/hexo/source/_posts/Trie树/7.png">
-<meta property="og:image" content="http://yoursite.com/2019/01/Trie树/github上项目/hexo/source/_posts/Trie树/8.png">
-<meta property="og:image" content="http://yoursite.com/2019/01/Trie树/github上项目/hexo/source/_posts/Trie树/9.png">
-<meta property="og:updated_time" content="2019-01-08T13:01:01.450Z">
+<meta property="og:image" content="http://yoursite.com/2019/01/Trie树/1.png">
+<meta property="og:image" content="http://yoursite.com/2019/01/Trie树/2.png">
+<meta property="og:image" content="http://yoursite.com/2019/01/Trie树/3.png">
+<meta property="og:image" content="http://yoursite.com/2019/01/Trie树/4.png">
+<meta property="og:image" content="http://yoursite.com/2019/01/Trie树/5.png">
+<meta property="og:image" content="http://yoursite.com/2019/01/Trie树/6.png">
+<meta property="og:image" content="http://yoursite.com/2019/01/Trie树/7.png">
+<meta property="og:image" content="http://yoursite.com/2019/01/Trie树/8.png">
+<meta property="og:image" content="http://yoursite.com/2019/01/Trie树/9.png">
+<meta property="og:updated_time" content="2019-01-08T13:05:29.242Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Trie树">
 <meta name="twitter:description" content="Trie树什么是Trie树Trie树，也叫字典树。它是一个树形结构。专门处理字符串匹配的数据结构，用来解决字符串集合中快速查找某个字符串的问题。 这样一个问题可以有多种解决方法，比如散列表、红黑树或者字符串匹配算法，但是Trie树在这个问题的解决上有特有的特点。 现在有6个字符串，分别是:how，hi，her，hello，so，see。如果每次查找，都是拿要查找的字符串跟这6个字符串依次进行字符串">
-<meta name="twitter:image" content="http://yoursite.com/2019/01/Trie树/github上项目/hexo/source/_posts/Trie树/1.png">
+<meta name="twitter:image" content="http://yoursite.com/2019/01/Trie树/1.png">
 
 
 
@@ -379,18 +379,18 @@
 <p>这样一个问题可以有多种解决方法，比如散列表、红黑树或者字符串匹配算法，但是Trie树在这个问题的解决上有特有的特点。</p>
 <p>现在有6个字符串，分别是:how，hi，her，hello，so，see。如果每次查找，都是拿要查找的字符串跟这6个字符串依次进行字符串匹配，效率比较低。可以先对这6个字符串做一下预处理，组织成Trie树的结构，之后每次查找，都是在Trie树中进行匹配查找。</p>
 <p><strong>Trie树的本质，就是利用字符串之间的公共前缀，将重复的前缀合并在一起。</strong></p>
-<p><img src="/2019/01/Trie树/github上项目\hexo\source\_posts\Trie树\1.png" alt="1546952011512"></p>
+<p><img src="/2019/01/Trie树/1.png" alt="1546952011512"></p>
 <p>其中，根节点不包含任何信息。每个节点表示一个字符串中的字符，从根节点到红色节点的一条路径表示一个字符串。(注意：红色节点并不都是叶子节点)。</p>
 <ul>
 <li>Trie树的构造过程<ul>
-<li>构造过程的每一步，都相当于往Trie树中插入一个字符串。当所有字符串都插入完成之后，Trie树就构造好了。<br><img src="/2019/01/Trie树/github上项目\hexo\source\_posts\Trie树\2.png" alt="1546952059021"><br><img src="/2019/01/Trie树/github上项目\hexo\source\_posts\Trie树\3.png" alt="1546952085222"></li>
+<li>构造过程的每一步，都相当于往Trie树中插入一个字符串。当所有字符串都插入完成之后，Trie树就构造好了。<br><img src="/2019/01/Trie树/2.png" alt="1546952059021"><br><img src="/2019/01/Trie树/3.png" alt="1546952085222"></li>
 </ul>
 </li>
 </ul>
-<p>当在Trie树中查找一个字符串的时候，比如查找字符串<code>her</code>，将要查找的字符串分割成单个字符h，e，r，然后从Trie树的根节点开始匹配。如图，绿色路径就是在Trie树中匹配的路径。<br><img src="/2019/01/Trie树/github上项目\hexo\source\_posts\Trie树\4.png" alt="1546952171577"></p>
-<p>如果要查找的字符串是<code>he</code>，还用上面同样的方法，从根节点开始，沿着某条路径来匹配，如图，绿色路径，是字符串<code>he</code>匹配的路径。但是，路径的最后一个节点<code>e</code>并不是红色的。也就是说，<code>he</code>是某个字符串的前缀子串，但并不能完全匹配任何字符串<br><img src="/2019/01/Trie树/github上项目\hexo\source\_posts\Trie树\5.png" alt="1546952204598"></p>
+<p>当在Trie树中查找一个字符串的时候，比如查找字符串<code>her</code>，将要查找的字符串分割成单个字符h，e，r，然后从Trie树的根节点开始匹配。如图，绿色路径就是在Trie树中匹配的路径。<br><img src="/2019/01/Trie树/4.png" alt="1546952171577"></p>
+<p>如果要查找的字符串是<code>he</code>，还用上面同样的方法，从根节点开始，沿着某条路径来匹配，如图，绿色路径，是字符串<code>he</code>匹配的路径。但是，路径的最后一个节点<code>e</code>并不是红色的。也就是说，<code>he</code>是某个字符串的前缀子串，但并不能完全匹配任何字符串<br><img src="/2019/01/Trie树/5.png" alt="1546952204598"></p>
 <h2 id="实现一棵Trie树"><a href="#实现一棵Trie树" class="headerlink" title="实现一棵Trie树"></a>实现一棵Trie树</h2><p>从以上图中可以看出，Trie树是一个多叉树。在二叉树中，一个节点的左右子节点是通过两个指针来存储的，如下代码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BinaryTreeNode</span></span>&#123;</span><br><span class="line">    <span class="keyword">char</span> data;</span><br><span class="line">    BinarytreeNode left;</span><br><span class="line">    BinarytreeNode right;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>假设字符串中只有从 a 到 z 这26个小写字母，则定义Trie树可以如下图。<br><img src="/2019/01/Trie树/github上项目\hexo\source\_posts\Trie树\6.png" alt="1546952349137"><br><img src="/2019/01/Trie树/github上项目\hexo\source\_posts\Trie树\7.png" alt="1546952391347"><br><img src="/2019/01/Trie树/github上项目\hexo\source\_posts\Trie树\8.png" alt="1546952409229"></p>
+<p>假设字符串中只有从 a 到 z 这26个小写字母，则定义Trie树可以如下图。<br><img src="/2019/01/Trie树/6.png" alt="1546952349137"><br><img src="/2019/01/Trie树/7.png" alt="1546952391347"><br><img src="/2019/01/Trie树/8.png" alt="1546952409229"></p>
 <p>在以下Trie的代码实现中，将采用最后一种方式来实现，即：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Node</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">boolean</span> isWord;</span><br><span class="line">    <span class="keyword">public</span> Map&lt;Character,Node&gt; next;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>使用映射的方式来实现。</p>
 <h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><h3 id="向Trie树中添加字符"><a href="#向Trie树中添加字符" class="headerlink" title="向Trie树中添加字符"></a>向Trie树中添加字符</h3><ul>
@@ -414,7 +414,7 @@
 </ul>
 <h2 id="Trie树查找某个字符串的时间复杂度"><a href="#Trie树查找某个字符串的时间复杂度" class="headerlink" title="Trie树查找某个字符串的时间复杂度"></a>Trie树查找某个字符串的时间复杂度</h2><p>如果要在一组字符串中，频繁地查询某些字符串，用Trie树会非常高效。构建Trie树的过程，需要扫描所有的字符串，时间复杂度是<code>O(n)</code>(n表示所有字符串的长度和)。但是，一旦构建成功后，后续的查询操作就会非常高效。</p>
 <p>每次查询时，如果要查询的字符串长度是 k ，那么只需要比对大约 k 个节点，就能完成查询操作。与原本那组字符串的长度和个数没有任何关系，所有说，构建好Trie树后，在其中查找字符串的时间复杂度是O(k)，k表示要查找的字符串的长度。</p>
-<p><img src="/2019/01/Trie树/github上项目\hexo\source\_posts\Trie树\9.png" alt="1546952445505"></p>
+<p><img src="/2019/01/Trie树/9.png" alt="1546952445505"></p>
 <h2 id="Trie树的局限性"><a href="#Trie树的局限性" class="headerlink" title="Trie树的局限性"></a>Trie树的局限性</h2><blockquote>
 <p>Trie树是非常耗内存的，用一种空间换时间的思路。</p>
 </blockquote>
