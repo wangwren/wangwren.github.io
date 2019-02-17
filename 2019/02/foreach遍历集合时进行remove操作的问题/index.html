@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <script src="https://wangwren.github.io/live2d/autoload.js"></script>
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+  <link href="//cdn.jsdelivr.net/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/favicon.ico?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="java,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="foreach循环时remove操作的问题最近做毕设时，因为功能需要，在遍历List集合时需要删除元素，当时使用的是foreach循环，之后就跳进了坑里，先看一段代码： 123456789101112131415161718192021public static void main(String[] args) &amp;#123;        List&amp;lt;String&amp;gt; list = new">
+<meta name="keywords" content="java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="foreach遍历集合时进行remove操作的问题">
+<meta property="og:url" content="http://yoursite.com/2019/02/foreach遍历集合时进行remove操作的问题/index.html">
+<meta property="og:site_name" content="计科一班">
+<meta property="og:description" content="foreach循环时remove操作的问题最近做毕设时，因为功能需要，在遍历List集合时需要删除元素，当时使用的是foreach循环，之后就跳进了坑里，先看一段代码： 123456789101112131415161718192021public static void main(String[] args) &amp;#123;        List&amp;lt;String&amp;gt; list = new">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2019/02/foreach遍历集合时进行remove操作的问题/1.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/foreach遍历集合时进行remove操作的问题/2.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/foreach遍历集合时进行remove操作的问题/3.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/foreach遍历集合时进行remove操作的问题/4.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/foreach遍历集合时进行remove操作的问题/5.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/foreach遍历集合时进行remove操作的问题/6.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/foreach遍历集合时进行remove操作的问题/7.png">
+<meta property="og:updated_time" content="2019-02-17T04:30:57.775Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="foreach遍历集合时进行remove操作的问题">
+<meta name="twitter:description" content="foreach循环时remove操作的问题最近做毕设时，因为功能需要，在遍历List集合时需要删除元素，当时使用的是foreach循环，之后就跳进了坑里，先看一段代码： 123456789101112131415161718192021public static void main(String[] args) &amp;#123;        List&amp;lt;String&amp;gt; list = new">
+<meta name="twitter:image" content="http://yoursite.com/2019/02/foreach遍历集合时进行remove操作的问题/1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/02/foreach遍历集合时进行remove操作的问题/">
+
+
+
+
+
+  <title>foreach遍历集合时进行remove操作的问题 | 计科一班</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?7fc95d12325ed0a8c439b341403f1c29";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">计科一班</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">DebugDog</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/foreach遍历集合时进行remove操作的问题/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="wangwren">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/a.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="计科一班">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">foreach遍历集合时进行remove操作的问题</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-02-17T12:10:02+08:00">
+                2019-02-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/02/foreach遍历集合时进行remove操作的问题/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/02/foreach遍历集合时进行remove操作的问题/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1.3k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  5
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="foreach循环时remove操作的问题"><a href="#foreach循环时remove操作的问题" class="headerlink" title="foreach循环时remove操作的问题"></a>foreach循环时remove操作的问题</h2><p>最近做毕设时，因为功能需要，在遍历List集合时需要删除元素，当时使用的是<code>foreach</code>循环，之后就跳进了坑里，先看一段代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        List&lt;String&gt; list = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        list.add(<span class="string">"e1"</span>);</span><br><span class="line">        list.add(<span class="string">"e2"</span>);</span><br><span class="line">        list.add(<span class="string">"e3"</span>);</span><br><span class="line">        list.add(<span class="string">"e4"</span>);</span><br><span class="line">        list.add(<span class="string">"e5"</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//使用foreach循环删除</span></span><br><span class="line">         <span class="keyword">for</span> (String item : list)&#123;</span><br><span class="line">            <span class="comment">//如果删除的是第四个元素不会报错</span></span><br><span class="line">            <span class="keyword">if</span> (<span class="string">"e2"</span>.equals(item))&#123;</span><br><span class="line">                list.remove(item);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">//System.out.println(item);</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//打印删除后的list元素</span></span><br><span class="line">        <span class="keyword">for</span> (String item : list)&#123;</span><br><span class="line">            System.out.println(item);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>控制台输出：</p>
+<p><img src="/2019/02/foreach遍历集合时进行remove操作的问题/1.png" alt="1550372446016"></p>
+<p>抛出了<code>java.util.ConcurrentModificationException</code>。</p>
+<p>增强<code>for</code>循环，即<code>foreach</code>循环其实就是根据<code>list</code>对象创建一个<code>iterator</code>迭代对象，用这个迭代对象来遍历<code>list</code>，相当于<code>list</code>对象中的元素的遍历托管给了<code>iterator</code>，如果对<code>list</code>进行增删操作，都必须经过<code>iterator</code>。</p>
+<p>将上述代码的<code>class</code>文件反编译，得到如下代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span></span></span><br><span class="line"><span class="function">   </span>&#123;</span><br><span class="line">       List list = <span class="keyword">new</span> ArrayList();</span><br><span class="line">       list.add(<span class="string">"e1"</span>);</span><br><span class="line">       list.add(<span class="string">"e2"</span>);</span><br><span class="line">       list.add(<span class="string">"e3"</span>);</span><br><span class="line">       list.add(<span class="string">"e4"</span>);</span><br><span class="line">       list.add(<span class="string">"e5"</span>);</span><br><span class="line">       Iterator iterator = list.iterator();</span><br><span class="line">       <span class="keyword">do</span></span><br><span class="line">       &#123;</span><br><span class="line">           <span class="keyword">if</span>(!iterator.hasNext())</span><br><span class="line">               <span class="keyword">break</span>;</span><br><span class="line">           String item = (String)iterator.next();</span><br><span class="line">           <span class="keyword">if</span>(<span class="string">"e2"</span>.equals(item))</span><br><span class="line">               list.remove(item);</span><br><span class="line">       &#125; <span class="keyword">while</span>(<span class="keyword">true</span>);</span><br><span class="line">       String item;</span><br><span class="line">       <span class="keyword">for</span>(Iterator iterator1 = list.iterator(); iterator1.hasNext(); System.out.println(item))</span><br><span class="line">           item = (String)iterator1.next();</span><br><span class="line"></span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>通过上述代码可以看出，<code>foreach</code>循环就是使用了<code>iterator</code>，所以使用<code>foreach</code>循环时都有以下两个操作。</p>
+<ul>
+<li><code>iterator.hasNext();</code>判断是否有下个元素</li>
+<li><code>item = iterator.next();</code>下个元素是什么，并把它赋给<code>item</code>。</li>
+</ul>
+<p>先定位一下该异常的抛出位置，在ArrayList的源码中：</p>
+<p><img src="/2019/02/foreach遍历集合时进行remove操作的问题/2.png" alt="1550373275803"></p>
+<p><img src="/2019/02/foreach遍历集合时进行remove操作的问题/3.png" alt="1550373420739"></p>
+<p>进入ArrayList源码中，可以看到是<code>checkForComodification()</code>方法抛出的异常，也就是说<code>modCount != expectedModCount</code>。</p>
+<p>具体原因，是在于使用<code>foreach</code>方式遍历元素的时候，生成<code>iterator</code>，然后使用<code>iterator</code>遍历。在生成<code>iterator</code>的时候，会保存一个<code>expectedModCount</code>参数，<strong>这个是生成<code>iterator</code>的时候List中修改元素的次数。</strong>如果在遍历过程中删除元素，<strong>List中<code>modCount</code>就会变化，</strong>如果这个<code>modCount</code>和<code>exceptedModCount</code>不一致，就会抛出异常，这是为了安全考虑。</p>
+<p>然而，list中的<code>remove</code>方法并没有对<code>expectedModCount</code>进行任何修改，导致<code>expectedModCount</code>和<code>modCount</code>不一致，抛出异常。</p>
+<h2 id="使用Iterator删除元素"><a href="#使用Iterator删除元素" class="headerlink" title="使用Iterator删除元素"></a>使用Iterator删除元素</h2><p>直接上代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        List&lt;String&gt; list = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        list.add(<span class="string">"e1"</span>);</span><br><span class="line">        list.add(<span class="string">"e2"</span>);</span><br><span class="line">        list.add(<span class="string">"e3"</span>);</span><br><span class="line">        list.add(<span class="string">"e4"</span>);</span><br><span class="line">        list.add(<span class="string">"e5"</span>);</span><br><span class="line">    	<span class="comment">//使用iterator删除元素</span></span><br><span class="line">        Iterator&lt;String&gt; iterator = list.iterator();</span><br><span class="line">        <span class="comment">//判断是否还有元素</span></span><br><span class="line">        <span class="keyword">while</span> (iterator.hasNext())&#123;</span><br><span class="line">            <span class="comment">//获取下一个元素</span></span><br><span class="line">            String next = iterator.next();</span><br><span class="line">            <span class="keyword">if</span> (<span class="string">"e2"</span>.equals(next))&#123;</span><br><span class="line">                <span class="comment">//使用Iterator中提供的remove方法删除元素</span></span><br><span class="line">                iterator.remove();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="comment">//打印删除后的list元素</span></span><br><span class="line">        <span class="keyword">for</span> (String item : list)&#123;</span><br><span class="line">            System.out.println(item);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>控制台输出结果：</p>
+<p><img src="/2019/02/foreach遍历集合时进行remove操作的问题/4.png" alt="1550374210501"></p>
+<p>可以看到没有任何问题，<strong>注意，使用的是<code>iterator.remove()</code>方法，而不是list中的<code>remove()</code>方法</strong>。</p>
+<p>看<code>Iterator</code>的<code>remove()</code>方法的源码，是对<code>expectedModCount</code>重新做了赋值处理：</p>
+<p><img src="/2019/02/foreach遍历集合时进行remove操作的问题/5.png" alt="1550374448385"></p>
+<p>这样保持<code>expectedModCount = modCount</code>相等，就不会抛出异常了。</p>
+<h2 id="是不是foreach所有的list删除操作都会报出这个错呢"><a href="#是不是foreach所有的list删除操作都会报出这个错呢" class="headerlink" title="是不是foreach所有的list删除操作都会报出这个错呢"></a>是不是foreach所有的list删除操作都会报出这个错呢</h2><p>其实不一定，使用上述<code>foreach</code>代码删除的元素是倒数第二个的话，即<code>e4</code>，就不会报错，看一下运行结果：</p>
+<p><img src="/2019/02/foreach遍历集合时进行remove操作的问题/6.png" alt="1550375062015"></p>
+<p>控制台输出正确，没有任何问题。</p>
+<p>之前说了，<code>foreach</code>循环会走两个方法<code>hasNext()</code>和<code>next()</code>。如果不想报错的话，只要不进<code>next()</code>方法就行了，看看<code>hasNext()</code>方法。</p>
+<p><img src="/2019/02/foreach遍历集合时进行remove操作的问题/7.png" alt="1550375299047"></p>
+<p>如果不进<code>next()</code>方法，就要求<code>hasNext()</code>方法返回false了，即<code>cursor == size</code>。其中<strong><code>cursor</code>是Itr类(Iterator子类)中的一个字段，用来保存当前<code>iterator</code>的位置信息，从0开始。cursor本就是游标的意思</strong>。只要<code>cursor</code>不等于<code>size</code>就认为存在元素。由于Itr是ArrayList的内部类，因此直接调用了ArrayList的size字段，<strong>所以这个字段的值是动态变化的，既然是动态变化的可能就会有问题出现了</strong>。</p>
+<p>以上述代码为例，当倒数第二个数据，也就是<code>e4</code>时，<code>cursor</code>是4，然后调用删除操作，此时<code>size</code>由5变成了4，当再调用<code>hasNext()</code>判断时，<code>cursor == size</code>，就会调用后面的操作直接退出循环了，也就不会走后面的异常了。</p>
+<h2 id="使用普通的for循环"><a href="#使用普通的for循环" class="headerlink" title="使用普通的for循环"></a>使用普通的for循环</h2><p>直接上代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        List&lt;String&gt; list = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        list.add(<span class="string">"e1"</span>);</span><br><span class="line">        list.add(<span class="string">"e2"</span>);</span><br><span class="line">        list.add(<span class="string">"e3"</span>);</span><br><span class="line">        list.add(<span class="string">"e4"</span>);</span><br><span class="line">        list.add(<span class="string">"e5"</span>);</span><br><span class="line">    	<span class="comment">/*使用标准for循环删除</span></span><br><span class="line"><span class="comment">          使用标准for循环删除，无论删除哪个元素都不会抛出异常</span></span><br><span class="line"><span class="comment">          因为删除后，list.size()又重新获取了</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; list.size(); i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (<span class="string">"e2"</span>.equals(list.get(i)))&#123;</span><br><span class="line">                list.remove(i); <span class="comment">//删除后，list的size会立即改变，而且之后的元素会向前移</span></span><br><span class="line">                <span class="comment">//这样，下面代码再删除e3时，还是当时i的位置，debug就能看明白</span></span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (<span class="string">"e3"</span>.equals(list.get(i)))&#123;</span><br><span class="line">                list.remove(i);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    	<span class="comment">//打印删除后的list元素</span></span><br><span class="line">        <span class="keyword">for</span> (String item : list)&#123;</span><br><span class="line">            System.out.println(item);</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用标准的for循环，<code>size()</code>动态获取，无论删除哪个元素都不会出现问题。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p><code>foreach</code>删除list元素时，只有倒数第二个元素删除不会报错，其他都会报错。</p>
+<p>所以，在循环遍历时，还要删除元素最好使用<code>Iterator</code>来遍历元素并进行删除元素。</p>
+
+      
+    </div>
+    
+    
+    
+
+    <div>
+      
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fas fa-dog"></i>感谢您的阅读-------------</div>
+    
+</div>
+      
+    </div>
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag"><i class="fa fa-tag"></i> java</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/02/Spring事务的传播行为/" rel="next" title="Spring事务的传播行为">
+                <i class="fa fa-chevron-left"></i> Spring事务的传播行为
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/uploads/a.jpg" alt="wangwren">
+            
+              <p class="site-author-name" itemprop="name">wangwren</p>
+              <p class="site-description motion-element" itemprop="description">记录笔记，写点东西</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/wangwren" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:wangwren0906@163.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#foreach循环时remove操作的问题"><span class="nav-number">1.</span> <span class="nav-text">foreach循环时remove操作的问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用Iterator删除元素"><span class="nav-number">2.</span> <span class="nav-text">使用Iterator删除元素</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#是不是foreach所有的list删除操作都会报出这个错呢"><span class="nav-number">3.</span> <span class="nav-text">是不是foreach所有的list删除操作都会报出这个错呢</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用普通的for循环"><span class="nav-number">4.</span> <span class="nav-text">使用普通的for循环</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-snowflake-o"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wangwren</span>
+
+  
+</div>
+
+
+  <div class="powered-by">
+    <i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+      本站访客数:<span id="busuanzi_value_site_uv"></span>
+    </span>
+  </div>
+
+  <!-- <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div> -->
+
+
+
+  <!-- <span class="post-meta-divider">|</span> -->
+
+
+
+  <!-- <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div> -->
+
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共9.3k字</span>
+</div>
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="//cdn.jsdelivr.net/jquery/2.1.3/jquery.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="//cdn.jsdelivr.net/fancybox/2.1.5/jquery.fancybox.pack.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'AjP5BYHXzMS81kEXA8BapGg5-gzGzoHsz',
+        appKey: '38YDBtc6pkKIugk4avv1W0Dn',
+        placeholder: '说点什么？',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+
+  
+   <canvas class="fireworks" style="position: fixed;left: 0;top: 0;z-index: 1; pointer-events: none;"></canvas> 
+   <script type="text/javascript" src="//cdn.bootcss.com/animejs/2.2.0/anime.min.js"></script> 
+   <script type="text/javascript" src="/js/src/fireworks.js"></script>
+
+   undefined
+<script src="/live2dw/lib/L2Dwidget.min.js?0c58a1486de42ac6cc1c59c7d98ae887"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/haru02.model.json"},"display":{"position":"right","width":100,"height":200},"mobile":{"show":true}});</script></body>
+</html>
