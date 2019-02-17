@@ -98,7 +98,7 @@
 <meta property="og:image" content="http://yoursite.com/2019/02/foreach遍历集合时进行remove操作的问题/5.png">
 <meta property="og:image" content="http://yoursite.com/2019/02/foreach遍历集合时进行remove操作的问题/6.png">
 <meta property="og:image" content="http://yoursite.com/2019/02/foreach遍历集合时进行remove操作的问题/7.png">
-<meta property="og:updated_time" content="2019-02-17T04:30:57.775Z">
+<meta property="og:updated_time" content="2019-02-17T04:35:18.390Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="foreach遍历集合时进行remove操作的问题">
 <meta name="twitter:description" content="foreach循环时remove操作的问题最近做毕设时，因为功能需要，在遍历List集合时需要删除元素，当时使用的是foreach循环，之后就跳进了坑里，先看一段代码： 123456789101112131415161718192021public static void main(String[] args) &amp;#123;        List&amp;lt;String&amp;gt; list = new">
@@ -412,6 +412,8 @@
 <p>使用标准的for循环，<code>size()</code>动态获取，无论删除哪个元素都不会出现问题。</p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p><code>foreach</code>删除list元素时，只有倒数第二个元素删除不会报错，其他都会报错。</p>
 <p>所以，在循环遍历时，还要删除元素最好使用<code>Iterator</code>来遍历元素并进行删除元素。</p>
+<p>参考文章：<a href="https://blog.csdn.net/bimuyulaila/article/details/52088124" target="_blank" rel="noopener">https://blog.csdn.net/bimuyulaila/article/details/52088124</a></p>
+<p><a href="https://chenyongjun.vip/articles/61" target="_blank" rel="noopener">https://chenyongjun.vip/articles/61</a></p>
 
       
     </div>
