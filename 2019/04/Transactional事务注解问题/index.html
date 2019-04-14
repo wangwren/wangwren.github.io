@@ -72,7 +72,7 @@
 
 
 
-  <meta name="keywords" content="生活,">
+  <meta name="keywords" content="Spring,java,">
 
 
 
@@ -83,20 +83,20 @@
 
 
 
-<meta name="description" content="当前最差的一年，未来最好的一年。  2018年最后一天了，这一年发生了好多事，真是一年比一年惨。想想去年的31号那天，真好啊。附一张去年最后一天拍的照片。  实习年初去了沈阳亚信待了两个月，基本就是在那体验了一下上班的感觉和程序员的加班熬夜，但是感觉很爽走了之后还给开了四千块钱。 开学之后就大三下了，一直到七月份吧，这之间真的是发生了好多事，没什么可提的了。 七月份来到沈阳东软实习，上班一礼拜就">
-<meta name="keywords" content="生活">
+<meta name="description" content="需要在Transactional注解指定rollbackFor或者在方法中显示的rollback是在编写代码时，由阿里巴巴规范的提示中看到的。 异常分类  error是一定会回滚的。 Exception又分为运行时异常(RuntimeException)和非运行时异常。     运行时异常 非运行时异常     NullPointerException：空指针引用异常 IOException">
+<meta name="keywords" content="Spring,java">
 <meta property="og:type" content="article">
-<meta property="og:title" content="2018总结">
-<meta property="og:url" content="http://yoursite.com/2018/12/2018总结/index.html">
+<meta property="og:title" content="Transactional事务注解问题">
+<meta property="og:url" content="http://yoursite.com/2019/04/Transactional事务注解问题/index.html">
 <meta property="og:site_name" content="计科一班">
-<meta property="og:description" content="当前最差的一年，未来最好的一年。  2018年最后一天了，这一年发生了好多事，真是一年比一年惨。想想去年的31号那天，真好啊。附一张去年最后一天拍的照片。  实习年初去了沈阳亚信待了两个月，基本就是在那体验了一下上班的感觉和程序员的加班熬夜，但是感觉很爽走了之后还给开了四千块钱。 开学之后就大三下了，一直到七月份吧，这之间真的是发生了好多事，没什么可提的了。 七月份来到沈阳东软实习，上班一礼拜就">
+<meta property="og:description" content="需要在Transactional注解指定rollbackFor或者在方法中显示的rollback是在编写代码时，由阿里巴巴规范的提示中看到的。 异常分类  error是一定会回滚的。 Exception又分为运行时异常(RuntimeException)和非运行时异常。     运行时异常 非运行时异常     NullPointerException：空指针引用异常 IOException">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://yoursite.com/2018/12/2018总结/1.png">
-<meta property="og:updated_time" content="2018-12-31T02:30:40.458Z">
+<meta property="og:image" content="http://yoursite.com/2019/04/Transactional事务注解问题/1555223543805.png">
+<meta property="og:updated_time" content="2019-04-14T09:42:30.101Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="2018总结">
-<meta name="twitter:description" content="当前最差的一年，未来最好的一年。  2018年最后一天了，这一年发生了好多事，真是一年比一年惨。想想去年的31号那天，真好啊。附一张去年最后一天拍的照片。  实习年初去了沈阳亚信待了两个月，基本就是在那体验了一下上班的感觉和程序员的加班熬夜，但是感觉很爽走了之后还给开了四千块钱。 开学之后就大三下了，一直到七月份吧，这之间真的是发生了好多事，没什么可提的了。 七月份来到沈阳东软实习，上班一礼拜就">
-<meta name="twitter:image" content="http://yoursite.com/2018/12/2018总结/1.png">
+<meta name="twitter:title" content="Transactional事务注解问题">
+<meta name="twitter:description" content="需要在Transactional注解指定rollbackFor或者在方法中显示的rollback是在编写代码时，由阿里巴巴规范的提示中看到的。 异常分类  error是一定会回滚的。 Exception又分为运行时异常(RuntimeException)和非运行时异常。     运行时异常 非运行时异常     NullPointerException：空指针引用异常 IOException">
+<meta name="twitter:image" content="http://yoursite.com/2019/04/Transactional事务注解问题/1555223543805.png">
 
 
 
@@ -126,13 +126,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/12/2018总结/">
+  <link rel="canonical" href="http://yoursite.com/2019/04/Transactional事务注解问题/">
 
 
 
 
 
-  <title>2018总结 | 计科一班</title>
+  <title>Transactional事务注解问题 | 计科一班</title>
   
 
 
@@ -259,7 +259,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/2018总结/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/Transactional事务注解问题/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="wangwren">
@@ -276,7 +276,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">2018总结</h1>
+          <h1 class="post-title" itemprop="name headline">Transactional事务注解问题</h1>
         
 
         <div class="post-meta">
@@ -288,8 +288,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-31T10:04:30+08:00">
-                2018-12-31
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-14T14:15:25+08:00">
+                2019-04-14
               </time>
             
 
@@ -307,8 +307,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2018/12/2018总结/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2018/12/2018总结/" itemprop="commentCount"></span>
+                <a href="/2019/04/Transactional事务注解问题/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/04/Transactional事务注解问题/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -330,7 +330,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1.1k
+                  908
                 </span>
               
 
@@ -367,35 +367,83 @@
       
 
       
-        <blockquote>
-<p>当前最差的一年，未来最好的一年。</p>
-</blockquote>
-<p>2018年最后一天了，这一年发生了好多事，真是一年比一年惨。想想去年的31号那天，真好啊。附一张去年最后一天拍的照片。</p>
-<p><img src="/2018/12/2018总结/1.png" alt="1546222048580"></p>
-<h2 id="实习"><a href="#实习" class="headerlink" title="实习"></a>实习</h2><p>年初去了沈阳亚信待了两个月，基本就是在那体验了一下上班的感觉和程序员的加班熬夜，但是感觉很爽走了之后还给开了四千块钱。</p>
-<p>开学之后就大三下了，一直到七月份吧，这之间真的是发生了好多事，<del>没什么可提的了。</del></p>
-<p>七月份来到沈阳东软实习，上班一礼拜就来北京出差了，原本还很开心，长这么大还没出过辽宁省呢，最远也就抚顺了，想着去北京肯定能开阔开阔眼界。</p>
-<h2 id="北京"><a href="#北京" class="headerlink" title="北京"></a>北京</h2><p><strong>北京，无数年轻人扎堆的地方，现实与梦想并存的一个城市。</strong></p>
-<p>我上班的地方很安逸，天天没有什么活，自己没事就看看Java编程思想，当时感觉自己很牛逼，就得瑟的想跳槽不干了，在北京找一个实习工作。当时闲着没事就投投简历，有过几次电话面试，当时就被拒了，但是也没感觉自己不行，还继续投，直到十月一放假前几天，接到了第一个面试邀请，结果非常惨，可以说是被赶上出来。当时就很绝望，终于认识到自己什么水平了。于是接下来的日子就是无休止的学习了（计算机基础真的很重要啊，mlgb），后悔大学三年没好好学基础，天天学些框架，在心里骂了无数遍学校，到最后也看开了，怪不得任何人任何事，就是自己没能力。</p>
-<p>学了一段时间基础后，陆续还有几个面试，结果当然也是被拒，但是比第一次好很多了，至少没被赶出来。</p>
-<p>一直到12月二十多号吧，收到了唯一一份offer，做Java爬虫，当时很开心，想着肯定要去了，但是，查了北京的租房之后，我又开始犹豫了，很难受，经过几经波折之后，拒绝了这份唯一找到的工作，原因有很多了，没什么可提的。总之，很难。</p>
-<h2 id="认知的提升"><a href="#认知的提升" class="headerlink" title="认知的提升"></a>认知的提升</h2><p>十月份的时候加入了stormzhang的星球，开始接受知识付费。真是又开阔了眼界啊，天天看着一群大佬，还有一些跟自己同龄的就很牛逼的人，很羡慕，而且在认知上感觉也有了很大的提升。</p>
-<h2 id="学到的东西"><a href="#学到的东西" class="headerlink" title="学到的东西"></a>学到的东西</h2><ul>
-<li>每天坚持学习，恶补Java基础，线程、io流、socket编程都过了一遍，而且也都动手实现了一遍，但是还不够，对于这部分知识还需要再系统的去学。</li>
-<li><em>极客时间</em>上买了很多课程，《数据结构与算法之美》这门课真的很棒，自己也就还处于入门的范围吧，对于一些算法还是需要实现出来。<em>慕课网</em>上的《数据结构从入门到进阶》也很不错，还差几节就看完了，需要规划出时间完成。</li>
-<li>最近刚接触了<em>樊登读书</em>。<ul>
-<li>在这上面看了《终身成长》，读完之后明白自己的固定型思维，需要向成长型思维转变，也别太在意别人对自己的评判。</li>
-<li>还读了《刻意练习》明白自己想做好一件事一份工作，需要专注，需要拿出时间了刻意的练习它，可能一万个小时不够，也有可能不到一万个小时。</li>
+        <h2 id="需要在Transactional注解指定rollbackFor或者在方法中显示的rollback"><a href="#需要在Transactional注解指定rollbackFor或者在方法中显示的rollback" class="headerlink" title="需要在Transactional注解指定rollbackFor或者在方法中显示的rollback"></a>需要在Transactional注解指定rollbackFor或者在方法中显示的rollback</h2><p>是在编写代码时，由阿里巴巴规范的提示中看到的。</p>
+<h3 id="异常分类"><a href="#异常分类" class="headerlink" title="异常分类"></a>异常分类</h3><p><img src="/2019/04/Transactional事务注解问题/1555223543805.png" alt="1555223543805"></p>
+<ul>
+<li>error是一定会回滚的。</li>
+<li>Exception又分为运行时异常(RuntimeException)和非运行时异常。</li>
 </ul>
-</li>
-<li>还在<em>得到</em>上买了薛兆丰的经济学课，平时没事午休时候会听一会，了解一些经济学的知识，没看太多，就不写总结了。</li>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">运行时异常</th>
+<th>非运行时异常</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">NullPointerException：空指针引用异常</td>
+<td>IOException</td>
+</tr>
+<tr>
+<td style="text-align:center">ClassCastException：类型强制转换异常</td>
+<td>编译时无法通过</td>
+</tr>
+<tr>
+<td style="text-align:center">IllegalArgumentException：传递非法参数异常</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:center">ArithmeticException：向数组中存放与声明类型不兼容对象异常</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:center">IndexOutOfBoundsException：下标越界异常</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:center">NegativeArraySizeException：创建一个大小为负数的数组错误异常</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:center">NumberFormatException：数字格式异常</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:center">SecurityException：安全异常</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:center">UnsupportedOperationException：不支持的操作异常，运行中逻辑错误引起的。</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:center">不可查的异常(unchecked exceptions)</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>可查的异常(checked exceptions)：Exception下除了RuntimeException外的异常。</li>
+<li>不可查的异常(unchecked exceptions)：RuntimeException及其子类和错误(Error)</li>
 </ul>
-<h2 id="感谢"><a href="#感谢" class="headerlink" title="感谢"></a>感谢</h2><p><strong>很感谢那个让我当初决定留在沈阳而没去大连的人，没有她可能我接触不到这么多的东西，也来不了北京，谢谢。</strong></p>
-<h2 id="2019"><a href="#2019" class="headerlink" title="2019"></a>2019</h2><ul>
-<li>但愿2019年春节回来能找到一份满意的工作，留在北京，顺利完成毕设，顺利毕业。加油吧。</li>
-<li>学习上坚持每天学习，每天阅读，继续学习基础知识，框架，合理分配好时间。</li>
-<li>这个博客是前几天刚搭建的，用这个博客来记录自己的学习过程和生活，坚持下去。</li>
+<p>如果不对运行时异常进行处理，那么出现运行时异常之后，要么线程中止，要么是主程序终止。如果不想终止，则必须捕获所有的运行时异常，绝不让这个处理线程退出。队列中出现异常数据，<strong>正常的处理应该是把异常数据舍弃，然后记录日志</strong>。不应该由于异常数据而影响下面对正常数据的处理。  </p>
+<p>非运行时异常是RuntimeException以外的异常，类型上都属于Exception类及其子类。如IOException、SQLException等以及用户自定义的Exception异常。对于这种异常，Java编译器强制要求必须对出现这些异常进行catch并处理，否则程序就不能编译通过。所以，面对这种异常不管我们是否愿意，只能自己去写一大堆catch块去处理可能的异常。  </p>
+<p>如果在编写代码时，只是简单声明<code>@Transactional</code>，<strong>Spring框架的事务基础架构代码将默认地只在抛出运行时和unchecked exceptions时才标识事务回滚。也就是说，当抛出个RuntimeException或其子类的实例时。（Errors也一样，默认地标识事务回滚）从事务方法中抛出的Checked exceptions将不被标识进行事务回滚</strong>。</p>
+<ol>
+<li>让checked例外也回滚：在整个方法前加上<code>@Transactional(rollbackFor=Exception.class)</code></li>
+<li>让unchecked例外不回滚：<code>@Transactional(notRollbackFor=RunTimeException.class)</code></li>
+<li>不需要事务管理的(只查询的)方法：<code>@Transactional(propagation.NOT_SUPPORTED)</code></li>
+</ol>
+<p><strong>注意：如果异常被try{}catch{}了，事务就不回滚了，如果想让事务回滚必须再往外抛try{}catch{throw Exception}</strong></p>
+<ul>
+<li>Spring团队的建议是在<strong>具体的类(或类的方法)</strong>上使用<code>@Transactional</code>注解，而不要使用在类所要实现的任何接口上。你当然可以在接口上使用<code>@Transactional</code>注解，但是这将只能当你设置了基于接口的代理时它才生效。因为注解是不能继承的，这就意味着如果你正在使用基于类的代理时，那么事务的设置将不能被基于类的代理所识别，而且对象也将不会被事务代理所包装(将被确认为严重的)。因此，请接收Spring团队的建议并且在具体的类上使用<code>@Transactional</code>注解。</li>
+<li><code>@Transactional</code>注解标识的方法，处理过程尽量的简单。尤其是带锁的事务方法，能不放在事务里面的最好不要放在事务里面。可以将常规的数据库查询操作放在事务前面进行，而事务内进行增、删、改、加锁查询等操作。</li>
 </ul>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a href="https://blog.csdn.net/qq_16605855/article/details/79653282" target="_blank" rel="noopener">https://blog.csdn.net/qq_16605855/article/details/79653282</a></p>
 
       
     </div>
@@ -423,7 +471,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/生活/" rel="tag"><i class="fa fa-tag"></i> 生活</a>
+            <a href="/tags/Spring/" rel="tag"><i class="fa fa-tag"></i> Spring</a>
+          
+            <a href="/tags/java/" rel="tag"><i class="fa fa-tag"></i> java</a>
           
         </div>
       
@@ -436,8 +486,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/12/链表/" rel="next" title="链表">
-                <i class="fa fa-chevron-left"></i> 链表
+              <a href="/2019/02/foreach遍历集合时进行remove操作的问题/" rel="next" title="foreach遍历集合时进行remove操作的问题">
+                <i class="fa fa-chevron-left"></i> foreach遍历集合时进行remove操作的问题
               </a>
             
           </div>
@@ -445,10 +495,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/01/Trie树/" rel="prev" title="Trie树">
-                Trie树 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -592,7 +638,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#实习"><span class="nav-number">1.</span> <span class="nav-text">实习</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#北京"><span class="nav-number">2.</span> <span class="nav-text">北京</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#认知的提升"><span class="nav-number">3.</span> <span class="nav-text">认知的提升</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#学到的东西"><span class="nav-number">4.</span> <span class="nav-text">学到的东西</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#感谢"><span class="nav-number">5.</span> <span class="nav-text">感谢</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2019"><span class="nav-number">6.</span> <span class="nav-text">2019</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#需要在Transactional注解指定rollbackFor或者在方法中显示的rollback"><span class="nav-number">1.</span> <span class="nav-text">需要在Transactional注解指定rollbackFor或者在方法中显示的rollback</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#异常分类"><span class="nav-number">1.1.</span> <span class="nav-text">异常分类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">1.2.</span> <span class="nav-text">参考</span></a></li></ol></li></ol></div>
             
 
           </div>
