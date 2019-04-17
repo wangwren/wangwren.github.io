@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2019-04-17T16:14:22.254Z</updated>
+  <updated>2019-04-14T09:42:30.101Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,27 +15,6 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
-  
-  <entry>
-    <title>测试</title>
-    <link href="http://yoursite.com/2019/04/%E6%B5%8B%E8%AF%95/"/>
-    <id>http://yoursite.com/2019/04/测试/</id>
-    <published>2019-04-17T16:13:06.000Z</published>
-    <updated>2019-04-17T16:14:22.254Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h1>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;h1 id=&quot;测试&quot;&gt;&lt;a href=&quot;#测试&quot; class=&quot;headerlink&quot; title=&quot;测试&quot;&gt;&lt;/a&gt;测试&lt;/h1&gt;
-      
-    
-    </summary>
-    
-    
-  </entry>
   
   <entry>
     <title>Transactional事务注解问题</title>
