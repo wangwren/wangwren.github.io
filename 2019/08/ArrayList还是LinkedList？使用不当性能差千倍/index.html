@@ -1,393 +1,35 @@
-<!DOCTYPE html>
-
-
-
-  
-
-
-<html class="theme-next pisces use-motion" lang="zh-Hans">
-<head><meta name="generator" content="Hexo 3.8.0">
-  <script src="https://wangwren.github.io/live2d/autoload.js"></script>
-  <meta charset="UTF-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<meta name="theme-color" content="#222">
-
-
-
-
-
-
-
-
-
-<meta http-equiv="Cache-Control" content="no-transform">
-<meta http-equiv="Cache-Control" content="no-siteapp">
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.8.0"><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><title>ArrayList还是LinkedList？使用不当性能差千倍 | 计科一班</title><meta name="description" content="ArrayList还是LinkedList？使用不当性能差千倍"><meta name="keywords" content="java"><meta name="author" content="wangwren"><meta name="copyright" content="wangwren"><meta name="format-detection" content="telephone=no"><link rel="shortcut icon" href="/img/favicon.ico"><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><meta http-equiv="x-dns-prefetch-control" content="on"><link rel="canonical" href="http://yoursite.com/2019/08/ArrayList还是LinkedList？使用不当性能差千倍/"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="ArrayList还是LinkedList？使用不当性能差千倍"><meta name="twitter:description" content="ArrayList还是LinkedList？使用不当性能差千倍"><meta name="twitter:image" content="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/avatar.jpg"><meta property="og:type" content="article"><meta property="og:title" content="ArrayList还是LinkedList？使用不当性能差千倍"><meta property="og:url" content="http://yoursite.com/2019/08/ArrayList还是LinkedList？使用不当性能差千倍/"><meta property="og:site_name" content="计科一班"><meta property="og:description" content="ArrayList还是LinkedList？使用不当性能差千倍"><meta property="og:image" content="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/avatar.jpg"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link rel="prev" title="Spring循环依赖的解决办法——带源码分析" href="http://yoursite.com/2019/08/Spring循环依赖的解决办法——带源码分析/"><link rel="next" title="Java字符串性能优化" href="http://yoursite.com/2019/07/Java字符串性能优化/"><link rel="dns-prefetch" href="https://hm.baidu.com"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?7fc95d12325ed0a8c439b341403f1c29";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":0,"cookieDomain":"http://wangwren.com/","msgToTraditionalChinese":"繁体","msgToSimplifiedChinese":"简"},
+  highlight_copy: 'false',
+  highlight_lang: 'true',
+  highlight_shrink: 'false',
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  bookmark: {
+    title: '添加书签',
+    message_prev: '按',
+    message_next: '键将本页加入书签'
+  },
+  runtime_unit: '天'
 
   
-  
-    
-  
-  <link href="//cdn.jsdelivr.net/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet" type="text/css">
-
-
-
-
-
-
-
-<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
-
-<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
-
-
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico?v=5.1.4">
-
-
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=5.1.4">
-
-
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico?v=5.1.4">
-
-
-  <link rel="mask-icon" href="/images/favicon.ico?v=5.1.4" color="#222">
-
-
-
-
-
-  <meta name="keywords" content="java,">
-
-
-
-
-
-  <link rel="alternate" href="/atom.xml" title="计科一班" type="application/atom+xml">
-
-
-
-
-
-
-<meta name="description" content="初始List接口List集合类的接口和类的实现关系： ArrayList、Vector、LinkedList集合类继承了AbstractList抽象类，而AbstractList实现了List接口，同时也继承了AbstractCollection抽象类。ArrayList、Vector、LinkedList又根据自我定位。分别实现了各自的功能。 ArrayList和Vector使用了数组实现，这两">
-<meta name="keywords" content="java">
-<meta property="og:type" content="article">
-<meta property="og:title" content="ArrayList还是LinkedList？使用不当性能差千倍">
-<meta property="og:url" content="http://yoursite.com/2019/08/ArrayList还是LinkedList？使用不当性能差千倍/index.html">
-<meta property="og:site_name" content="计科一班">
-<meta property="og:description" content="初始List接口List集合类的接口和类的实现关系： ArrayList、Vector、LinkedList集合类继承了AbstractList抽象类，而AbstractList实现了List接口，同时也继承了AbstractCollection抽象类。ArrayList、Vector、LinkedList又根据自我定位。分别实现了各自的功能。 ArrayList和Vector使用了数组实现，这两">
-<meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/18/15661014028590.jpg">
-<meta property="og:image" content="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/18/15661031417755.jpg">
-<meta property="og:image" content="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/18/15661036779389.jpg">
-<meta property="og:image" content="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/18/15661042744431.jpg">
-<meta property="og:image" content="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/18/15661047419461.jpg">
-<meta property="og:image" content="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/18/15661052286864.jpg">
-<meta property="og:image" content="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/18/15661053902513.jpg">
-<meta property="og:image" content="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/18/15661059227354.jpg">
-<meta property="og:image" content="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/18/15661061844720.jpg">
-<meta property="og:image" content="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/18/15661067618598.jpg">
-<meta property="og:image" content="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/18/15661069779560.jpg">
-<meta property="og:image" content="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/18/15661071723588.jpg">
-<meta property="og:image" content="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/18/15661073789558.jpg">
-<meta property="og:image" content="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/18/15661076441260.jpg">
-<meta property="og:image" content="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/18/15661076736983.jpg">
-<meta property="og:updated_time" content="2019-08-18T06:16:32.344Z">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="ArrayList还是LinkedList？使用不当性能差千倍">
-<meta name="twitter:description" content="初始List接口List集合类的接口和类的实现关系： ArrayList、Vector、LinkedList集合类继承了AbstractList抽象类，而AbstractList实现了List接口，同时也继承了AbstractCollection抽象类。ArrayList、Vector、LinkedList又根据自我定位。分别实现了各自的功能。 ArrayList和Vector使用了数组实现，这两">
-<meta name="twitter:image" content="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/18/15661014028590.jpg">
-
-
-
-<script type="text/javascript" id="hexo.configurations">
-  var NexT = window.NexT || {};
-  var CONFIG = {
-    root: '/',
-    scheme: 'Pisces',
-    version: '5.1.4',
-    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
-    fancybox: true,
-    tabs: true,
-    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
-    duoshuo: {
-      userId: '0',
-      author: '博主'
-    },
-    algolia: {
-      applicationID: '',
-      apiKey: '',
-      indexName: '',
-      hits: {"per_page":10},
-      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
-    }
-  };
-</script>
-
-
-
-  <link rel="canonical" href="http://yoursite.com/2019/08/ArrayList还是LinkedList？使用不当性能差千倍/">
-
-
-
-
-
-  <title>ArrayList还是LinkedList？使用不当性能差千倍 | 计科一班</title>
-  
-
-
-
-
-
-  <script type="text/javascript">
-    var _hmt = _hmt || [];
-    (function() {
-      var hm = document.createElement("script");
-      hm.src = "https://hm.baidu.com/hm.js?7fc95d12325ed0a8c439b341403f1c29";
-      var s = document.getElementsByTagName("script")[0];
-      s.parentNode.insertBefore(hm, s);
-    })();
-  </script>
-
-
-
-
-</head>
-
-<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
-
-  
-  
-    
-  
-
-  <div class="container sidebar-position-left page-post-detail">
-    <div class="headband"></div>
-
-    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-wrapper">
-  <div class="site-meta ">
-    
-
-    <div class="custom-logo-site-title">
-      <a href="/" class="brand" rel="start">
-        <span class="logo-line-before"><i></i></span>
-        <span class="site-title">计科一班</span>
-        <span class="logo-line-after"><i></i></span>
-      </a>
-    </div>
-      
-        <p class="site-subtitle">DebugDog</p>
-      
-  </div>
-
-  <div class="site-nav-toggle">
-    <button>
-      <span class="btn-bar"></span>
-      <span class="btn-bar"></span>
-      <span class="btn-bar"></span>
-    </button>
-  </div>
-</div>
-
-<nav class="site-nav">
-  
-
-  
-    <ul id="menu" class="menu">
-      
-        
-        <li class="menu-item menu-item-home">
-          <a href="/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
-            
-            首页
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-about">
-          <a href="/about/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
-            
-            关于
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-tags">
-          <a href="/tags/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
-            
-            标签
-          </a>
-        </li>
-      
-
-      
-    </ul>
-  
-
-  
-</nav>
-
-
-
- </div>
-    </header>
-
-    <main id="main" class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          <div id="content" class="content">
-            
-
-  <div id="posts" class="posts-expand">
-    
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/ArrayList还是LinkedList？使用不当性能差千倍/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="wangwren">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/a.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="计科一班">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">ArrayList还是LinkedList？使用不当性能差千倍</h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-18T14:13:43+08:00">
-                2019-08-18
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2019/08/ArrayList还是LinkedList？使用不当性能差千倍/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2019/08/ArrayList还是LinkedList？使用不当性能差千倍/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  2.2k
-                </span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
-                
-                <span title="阅读时长">
-                  7
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        <h2 id="初始List接口"><a href="#初始List接口" class="headerlink" title="初始List接口"></a>初始List接口</h2><p>List集合类的接口和类的实现关系：<br><img src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/18/15661014028590.jpg" alt=""></p>
+}</script></head><body><canvas class="fireworks"></canvas><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div class="auto_open" id="sidebar"><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#初始List接口"><span class="toc-number">1.</span> <span class="toc-text">初始List接口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ArrayList是如何实现的？"><span class="toc-number">2.</span> <span class="toc-text">ArrayList是如何实现的？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ArrayList实现类"><span class="toc-number">2.1.</span> <span class="toc-text">ArrayList实现类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ArrayList属性"><span class="toc-number">2.2.</span> <span class="toc-text">ArrayList属性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ArrayList构造函数"><span class="toc-number">2.3.</span> <span class="toc-text">ArrayList构造函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ArrayList新增元素"><span class="toc-number">2.4.</span> <span class="toc-text">ArrayList新增元素</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ArrayList删除元素"><span class="toc-number">2.5.</span> <span class="toc-text">ArrayList删除元素</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ArrayList遍历元素"><span class="toc-number">2.6.</span> <span class="toc-text">ArrayList遍历元素</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LinkedList是如何实现的？"><span class="toc-number">3.</span> <span class="toc-text">LinkedList是如何实现的？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#LinkedList实现类"><span class="toc-number">3.1.</span> <span class="toc-text">LinkedList实现类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LinkedList属性"><span class="toc-number">3.2.</span> <span class="toc-text">LinkedList属性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LinkedList新增元素"><span class="toc-number">3.3.</span> <span class="toc-text">LinkedList新增元素</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LinkedList删除元素"><span class="toc-number">3.4.</span> <span class="toc-text">LinkedList删除元素</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LinkedList遍历元素"><span class="toc-number">3.5.</span> <span class="toc-text">LinkedList遍历元素</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#最后"><span class="toc-number">4.</span> <span class="toc-text">最后</span></a></li></ol></div></div></div><div id="content-outer"><div id="top-container" style="background-image: url(https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/Photo/post.png)"><div id="page-header"><span class="pull-left"> <a class="blog_title" id="site-name" href="/">计科一班</a></span><div class="open toggle-menu pull-right"><div class="menu-icon-first"></div><div class="menu-icon-second"></div><div class="menu-icon-third"></div></div><div class="menu_mask"></div><span class="pull-right menus"><div class="mobile_author_icon"><img class="lozad avatar_img" src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'"></div><div class="mobile_post_data"><div class="mobile_data_item text-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">11</div></a></div></div><div class="mobile_data_item text-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">标签</div><div class="length_num">7</div></a></div></div></div><hr><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> 关于</span></a></div><script>document.body.addEventListener('touchstart', function(){ });</script></div></span><span class="pull-right"></span></div><div id="post-info"><div id="post-title"><div class="posttitle">ArrayList还是LinkedList？使用不当性能差千倍</div></div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 发表于 2019-08-18<span class="post-meta__separator">|</span><i class="fa fa-history" aria-hidden="true"></i> 更新于 2019-08-18</time><div class="post-meta-wordcount"><span>字数总计: </span><span class="word-count">2.2k</span><span class="post-meta__separator">|</span><span>阅读时长: 6 分钟</span><span class="post-meta__separator">|</span><span>阅读量: </span><span id="busuanzi_value_page_pv"></span></div></div></div></div><div class="layout layout_post" id="content-inner">   <article id="post"><div class="article-container" id="post-content"><h2 id="初始List接口"><a href="#初始List接口" class="headerlink" title="初始List接口"></a>初始List接口</h2><p>List集合类的接口和类的实现关系：<br><img alt="" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/18/15661014028590.jpg" class="lozad"></p>
 <p>ArrayList、Vector、LinkedList集合类继承了AbstractList抽象类，而AbstractList实现了List接口，同时也继承了AbstractCollection抽象类。ArrayList、Vector、LinkedList又根据自我定位。分别实现了各自的功能。</p>
 <p>ArrayList和Vector使用了<strong>数组</strong>实现，这两者的实现原理差不多，LinkedList使用了<strong>双向链表</strong>实现。</p>
 <h2 id="ArrayList是如何实现的？"><a href="#ArrayList是如何实现的？" class="headerlink" title="ArrayList是如何实现的？"></a>ArrayList是如何实现的？</h2><ul>
-<li><p>问题1：ArrayList的实现类源码中，对象数组<code>elementData</code>使用了<code>transient</code>修饰，被<code>transient</code>关键字修改的属性，则表示该属性不会被序列化，然而并没有看到文档中说明ArrayList不能被序列化，为什么？<br><img src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/18/15661031417755.jpg" alt=""></p>
+<li><p>问题1：ArrayList的实现类源码中，对象数组<code>elementData</code>使用了<code>transient</code>修饰，被<code>transient</code>关键字修改的属性，则表示该属性不会被序列化，然而并没有看到文档中说明ArrayList不能被序列化，为什么？<br><img alt="" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/18/15661031417755.jpg" class="lozad"></p>
 </li>
 <li><p>问题2：在使用ArrayList进行新增、删除时，经常被提醒“使用ArrayList做新增删除操作会影响效率”。那是不是ArrayList在大量新增元素的场景下效率就一定会变慢呢？</p>
 </li>
@@ -395,22 +37,22 @@
 </ul>
 <h3 id="ArrayList实现类"><a href="#ArrayList实现类" class="headerlink" title="ArrayList实现类"></a>ArrayList实现类</h3><p>ArrayList实现了List接口，继承了AbstractList抽象类，底层是数组实现的，并且实现了自增扩容数组大小。</p>
 <p>ArrayList还实现了Cloneable接口和Serializable接口，所以他可以实现克隆和序列化。</p>
-<p>ArrayList还实现了RandomAccess接口。该接口其实是一个空接口，什么也没有实现，该接口是一个标志接口，他标志着<em>只要实现该接口的List类，都能实现快速随机访问</em>。<br><img src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/18/15661036779389.jpg" alt=""></p>
+<p>ArrayList还实现了RandomAccess接口。该接口其实是一个空接口，什么也没有实现，该接口是一个标志接口，他标志着<em>只要实现该接口的List类，都能实现快速随机访问</em>。<br><img alt="" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/18/15661036779389.jpg" class="lozad"></p>
 <h3 id="ArrayList属性"><a href="#ArrayList属性" class="headerlink" title="ArrayList属性"></a>ArrayList属性</h3><p>ArrayList属性主要由数组长度size、对象数组elementData、初始化容量DEFAULT_CAPACITY等组成，其中初始化容量默认大小为10。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 默认初始化容量</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> DEFAULT_CAPACITY = <span class="number">10</span>;</span><br><span class="line"><span class="comment">// 对象数组</span></span><br><span class="line"><span class="keyword">transient</span> Object[] elementData; </span><br><span class="line"><span class="comment">// 数组长度</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">int</span> size;</span><br></pre></td></tr></table></figure></p>
 <p>从ArrayList属性来看，它没有被任何的多线程关键字修饰，但elementData被关键字transient修饰了。这就是上面提到的第一个问题：<em>transient关键字修饰该字段则表示该属性不会被序列化，但ArrayList其实是实现了序列化接口，为什么？</em></p>
 <p>由于ArrayList的数组是基于动态扩增的，所以<strong>并不是所有被分配的内存空间都存储了数据</strong>。</p>
-<p>如果采用外部序列化实现数组的序列化，会序列化整个数组。ArrayList为了避免这些没有存储数据的内存空间被序列化，内部提供了两个私有方法<code>writeObject</code>以及<code>readObject</code>来自我完成序列化与反序列化，从而序列化与反序列化数组时节省了空间和时间。<br><img src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/18/15661042744431.jpg" alt=""></p>
+<p>如果采用外部序列化实现数组的序列化，会序列化整个数组。ArrayList为了避免这些没有存储数据的内存空间被序列化，内部提供了两个私有方法<code>writeObject</code>以及<code>readObject</code>来自我完成序列化与反序列化，从而序列化与反序列化数组时节省了空间和时间。<br><img alt="" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/18/15661042744431.jpg" class="lozad"></p>
 <p><strong>因此使用transient修饰数组，是防止对象数组被其他外部方法序列化</strong>。</p>
 <h3 id="ArrayList构造函数"><a href="#ArrayList构造函数" class="headerlink" title="ArrayList构造函数"></a>ArrayList构造函数</h3><p>ArrayList类实现了三个构造函数，第一个是创建ArrayList对象时，传入一个初始化值；第二个是默认创建一个空数组对象；第三个是传入一个集合类型进行初始化。</p>
-<p>当ArrayList新增元素时，如果所存储的元素已经超过其已有大小，它会计算元素大小后再进行动态扩容，数组的扩容会导致整个数组进行一次内存复制。因此，在初始化ArrayList时，可以通过第一个构造函数合理指定数组初始大小，这样有助于减少数组的扩容次数，从而提高系统性能。<br><img src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/18/15661047419461.jpg" alt=""></p>
-<h3 id="ArrayList新增元素"><a href="#ArrayList新增元素" class="headerlink" title="ArrayList新增元素"></a>ArrayList新增元素</h3><p>ArrayList新增元素的方法有两种，一种是直接将元素加到数组的末尾，另外一种是添加元素到任意位置。<br><img src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/18/15661052286864.jpg" alt=""><br>两个方法的相同之处是在添加元素之前，都会先确认容量大小，如果容量够大，就不用进行扩容；如果容量不够大，就会按照原来数组的1.5倍大小进行扩容，在扩容之后需要将数组复制到新分配的内存地址。</p>
-<p><img src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/18/15661053902513.jpg" alt=""></p>
+<p>当ArrayList新增元素时，如果所存储的元素已经超过其已有大小，它会计算元素大小后再进行动态扩容，数组的扩容会导致整个数组进行一次内存复制。因此，在初始化ArrayList时，可以通过第一个构造函数合理指定数组初始大小，这样有助于减少数组的扩容次数，从而提高系统性能。<br><img alt="" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/18/15661047419461.jpg" class="lozad"></p>
+<h3 id="ArrayList新增元素"><a href="#ArrayList新增元素" class="headerlink" title="ArrayList新增元素"></a>ArrayList新增元素</h3><p>ArrayList新增元素的方法有两种，一种是直接将元素加到数组的末尾，另外一种是添加元素到任意位置。<br><img alt="" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/18/15661052286864.jpg" class="lozad"><br>两个方法的相同之处是在添加元素之前，都会先确认容量大小，如果容量够大，就不用进行扩容；如果容量不够大，就会按照原来数组的1.5倍大小进行扩容，在扩容之后需要将数组复制到新分配的内存地址。</p>
+<p><img alt="" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/18/15661053902513.jpg" class="lozad"></p>
 <p>这两个add方法也有不同之处，添加元素到任意位置，会导致在该位置后的所有元素都需要重新排列，而将元素添加到数组的末尾，在没有发生扩容的前提下，是不会有元素复制排序过程的。</p>
 <p>这就是第二个问题的答案了。如果在初始化时就<strong>比较清楚存储数据的大小</strong>，就可以在ArrayList初始化时指定数组容量大小，并且在添加元素时，只在数组末尾元素，那么ArrayList在大量新增元素的场景下，性能并不会变差，反而比其他List集合的性能要好。</p>
-<h3 id="ArrayList删除元素"><a href="#ArrayList删除元素" class="headerlink" title="ArrayList删除元素"></a>ArrayList删除元素</h3><p>ArrayList的删除方法和添加任意位置元素的方法是有些相同的。ArrayList在每一次有效的删除元素操作之后，都要进行数组的重组，并且删除的元素位置越靠前，数组重组的开销就越大。<br><img src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/18/15661059227354.jpg" alt=""></p>
+<h3 id="ArrayList删除元素"><a href="#ArrayList删除元素" class="headerlink" title="ArrayList删除元素"></a>ArrayList删除元素</h3><p>ArrayList的删除方法和添加任意位置元素的方法是有些相同的。ArrayList在每一次有效的删除元素操作之后，都要进行数组的重组，并且删除的元素位置越靠前，数组重组的开销就越大。<br><img alt="" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/18/15661059227354.jpg" class="lozad"></p>
 <h3 id="ArrayList遍历元素"><a href="#ArrayList遍历元素" class="headerlink" title="ArrayList遍历元素"></a>ArrayList遍历元素</h3><p>由于ArrayList是基于数组实现的，所以在获取元素的时候是非常快捷的。</p>
 <h2 id="LinkedList是如何实现的？"><a href="#LinkedList是如何实现的？" class="headerlink" title="LinkedList是如何实现的？"></a>LinkedList是如何实现的？</h2><p>虽然LinkedList与ArrayList都是List类型的集合，但LinkedList的实现原理却和ArrayList大相径庭，使用场景也不太一样。</p>
-<p>LinkedList是基于<strong>双向链表</strong>数据结构实现的，LinkedList定义了一个Node结构，Node结构中包含了三个部分：元素内容item、前指针prev以及后指针next。<br><img src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/18/15661061844720.jpg" alt=""></p>
+<p>LinkedList是基于<strong>双向链表</strong>数据结构实现的，LinkedList定义了一个Node结构，Node结构中包含了三个部分：元素内容item、前指针prev以及后指针next。<br><img alt="" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/18/15661061844720.jpg" class="lozad"></p>
 <p>总结一下，LinkedList就是由Node结构对象连接而成的一个双向链表。在JDK1.7之前，LinkedList中只包含了一个Entry结构的header属性，并在初始化的时候默认创建一个空的Entry，用来做header，前后指针指向自己，形成一个<strong>循环双向链表</strong>。</p>
 <p>在JDK1.7之后，LinkedList对链表进行了优化。链表的Entry结构换成了Node，内部组成基本没有改变，但LinkedList里面的header属性去掉了，新增了一个<strong>Node结构的first属性</strong>和一个<strong>Node结构的last属性</strong>。这样做有以下几点好处：</p>
 <ul>
@@ -419,469 +61,39 @@
 <li>first/last方式最重要的性能优化是链头和链尾的插入删除操作更加快捷了。</li>
 </ul>
 <h3 id="LinkedList实现类"><a href="#LinkedList实现类" class="headerlink" title="LinkedList实现类"></a>LinkedList实现类</h3><p>LinkedList类实现了List接口、Deque接口，同时继承了AbstractSequentiaList抽象类，LinkedList既实现了List类型又有Queue类型的特点；LinkedList也实现了Cloneable和Serializable接口，同ArrayList一样，可以实现克隆和序列化。</p>
-<p>由于LinkedList<strong>存储数据的内存地址是不连续的</strong>，而是通过指针来定位不连续地址，因此<strong>LinkedList不支持随机快速访问</strong>，LinkedList也就不能实现RandomAccess接口。<br><img src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/18/15661067618598.jpg" alt=""></p>
-<h3 id="LinkedList属性"><a href="#LinkedList属性" class="headerlink" title="LinkedList属性"></a>LinkedList属性</h3><p>前面讲到了LinkedList的两个重要属性first/last属性，其实还有一个size属性。可以看到这三个属性都被transient修饰了，原因很简单，<strong>在序列化的时候不会只对头尾进行序列化</strong>，所以LinkedList也是自行实现<code>readObject</code>和<code>writeObject</code>进行序列化和反序列化。<br><img src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/18/15661069779560.jpg" alt=""></p>
-<h3 id="LinkedList新增元素"><a href="#LinkedList新增元素" class="headerlink" title="LinkedList新增元素"></a>LinkedList新增元素</h3><p>LinkedList添加元素的实现很简洁，但添加的方式却有很多种。默认的add(E e)方法是将添加的元素加到队尾，首先是将last元素置换到临时变量中，生成一个新的Node节点对象，然后将last引用指向新节点对象，之前的last对象的前指针指向新节点对象。<br><img src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/18/15661071723588.jpg" alt=""><br><img src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/18/15661073789558.jpg" alt=""></p>
-<p>LinkedList也有添加元素到任意位置的方法，如果将元素添加到任意两个元素的中间位置，添加元素操作只会改变前后元素的前后指针，指针将会指向添加的新元素，所以相比ArrayList的添加操作来说，LinkedList的性能优势明显。<br><img src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/18/15661076441260.jpg" alt=""><br><img src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/18/15661076736983.jpg" alt=""></p>
+<p>由于LinkedList<strong>存储数据的内存地址是不连续的</strong>，而是通过指针来定位不连续地址，因此<strong>LinkedList不支持随机快速访问</strong>，LinkedList也就不能实现RandomAccess接口。<br><img alt="" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/18/15661067618598.jpg" class="lozad"></p>
+<h3 id="LinkedList属性"><a href="#LinkedList属性" class="headerlink" title="LinkedList属性"></a>LinkedList属性</h3><p>前面讲到了LinkedList的两个重要属性first/last属性，其实还有一个size属性。可以看到这三个属性都被transient修饰了，原因很简单，<strong>在序列化的时候不会只对头尾进行序列化</strong>，所以LinkedList也是自行实现<code>readObject</code>和<code>writeObject</code>进行序列化和反序列化。<br><img alt="" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/18/15661069779560.jpg" class="lozad"></p>
+<h3 id="LinkedList新增元素"><a href="#LinkedList新增元素" class="headerlink" title="LinkedList新增元素"></a>LinkedList新增元素</h3><p>LinkedList添加元素的实现很简洁，但添加的方式却有很多种。默认的add(E e)方法是将添加的元素加到队尾，首先是将last元素置换到临时变量中，生成一个新的Node节点对象，然后将last引用指向新节点对象，之前的last对象的前指针指向新节点对象。<br><img alt="" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/18/15661071723588.jpg" class="lozad"><br><img alt="" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/18/15661073789558.jpg" class="lozad"></p>
+<p>LinkedList也有添加元素到任意位置的方法，如果将元素添加到任意两个元素的中间位置，添加元素操作只会改变前后元素的前后指针，指针将会指向添加的新元素，所以相比ArrayList的添加操作来说，LinkedList的性能优势明显。<br><img alt="" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/18/15661076441260.jpg" class="lozad"><br><img alt="" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/18/15661076736983.jpg" class="lozad"></p>
 <h3 id="LinkedList删除元素"><a href="#LinkedList删除元素" class="headerlink" title="LinkedList删除元素"></a>LinkedList删除元素</h3><p>在LinkedList删除元素的操作中，首先要通过循环找到要删除的元素，<strong>如果要删除的位置处于List的前半段，就从前往后找；若其位置处于后半段，就从后往前找</strong>。</p>
 <p>这样做的话，无论要删除较为靠前或较为靠后的元素都是非常高效的，但如果List拥有大量元素，移除的元素又在List的中间段，那效率相对来说会很低。</p>
 <h3 id="LinkedList遍历元素"><a href="#LinkedList遍历元素" class="headerlink" title="LinkedList遍历元素"></a>LinkedList遍历元素</h3><p>LinkedList的获取元素操作实现跟LinkedList的删除元素操作基本类似，通过前后半段来循环查找到对应的元素。但是通过这种方式来查询元素是非常低效的，特别是在for循环遍历的情况下，每一次循环都会去遍历半个List(通过位置查找的话，每次都要从头来循环找)。</p>
 <p>所以在LinkedList循环遍历时，<strong>可以使用iterator方式迭代循环</strong>，直接拿到元素。</p>
 <h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p><a href="http://wangwren.com/2019/02/foreach%E9%81%8D%E5%8E%86%E9%9B%86%E5%90%88%E6%97%B6%E8%BF%9B%E8%A1%8Cremove%E6%93%8D%E4%BD%9C%E7%9A%84%E9%97%AE%E9%A2%98/#more" target="_blank" rel="noopener">使用for循环遍历删除操作ArrayList数组会出现的问题</a>。</p>
-
-      
-    </div>
-    
-    
-    
-
-    <div>
-      
-        <div>
-    
-        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fas fa-dog"></i>感谢您的阅读-------------</div>
-    
-</div>
-      
-    </div>
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-        <div class="post-tags">
-          
-            <a href="/tags/java/" rel="tag"><i class="fa fa-tag"></i> java</a>
-          
-        </div>
-      
-
-      
-      
-      
-
-      
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-            
-              <a href="/2019/07/Java字符串性能优化/" rel="next" title="Java字符串性能优化">
-                <i class="fa fa-chevron-left"></i> Java字符串性能优化
-              </a>
-            
-          </div>
-
-          <span class="post-nav-divider"></span>
-
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/08/Spring循环依赖的解决办法——带源码分析/" rel="prev" title="Spring循环依赖的解决办法——带源码分析">
-                Spring循环依赖的解决办法——带源码分析 <i class="fa fa-chevron-right"></i>
-              </a>
-            
-          </div>
-        </div>
-      
-
-      
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-
-    <div class="post-spread">
-      
-    </div>
-  </div>
-
-
-          </div>
-          
-
-
-          
-
-  
-    <div class="comments" id="comments">
-    </div>
-  
-
-
-
-        </div>
-        
-          
-  
-  <div class="sidebar-toggle">
-    <div class="sidebar-toggle-line-wrap">
-      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-    </div>
-  </div>
-
-  <aside id="sidebar" class="sidebar">
-    
-    <div class="sidebar-inner">
-
-      
-
-      
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            站点概览
-          </li>
-        </ul>
-      
-
-      <section class="site-overview-wrap sidebar-panel">
-        <div class="site-overview">
-          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-            
-              <img class="site-author-image" itemprop="image" src="/uploads/a.jpg" alt="wangwren">
-            
-              <p class="site-author-name" itemprop="name">wangwren</p>
-              <p class="site-description motion-element" itemprop="description">记录笔记，写点东西</p>
-          </div>
-
-          <nav class="site-state motion-element">
-
-            
-              <div class="site-state-item site-state-posts">
-              
-                <a href="/archives">
-              
-                  <span class="site-state-item-count">11</span>
-                  <span class="site-state-item-name">日志</span>
-                </a>
-              </div>
-            
-
-            
-
-            
-              
-              
-              <div class="site-state-item site-state-tags">
-                <a href="/tags/index.html">
-                  <span class="site-state-item-count">7</span>
-                  <span class="site-state-item-name">标签</span>
-                </a>
-              </div>
-            
-
-          </nav>
-
-          
-            <div class="feed-link motion-element">
-              <a href="/atom.xml" rel="alternate">
-                <i class="fa fa-rss"></i>
-                RSS
-              </a>
-            </div>
-          
-
-          
-            <div class="links-of-author motion-element">
-                
-                  <span class="links-of-author-item">
-                    <a href="https://github.com/wangwren" target="_blank" title="GitHub">
-                      
-                        <i class="fa fa-fw fa-github"></i>GitHub</a>
-                  </span>
-                
-                  <span class="links-of-author-item">
-                    <a href="mailto:wangwren0906@163.com" target="_blank" title="E-Mail">
-                      
-                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
-                  </span>
-                
-            </div>
-          
-
-          
-          
-
-          
-          
-
-          
-
-        </div>
-      </section>
-
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#初始List接口"><span class="nav-number">1.</span> <span class="nav-text">初始List接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ArrayList是如何实现的？"><span class="nav-number">2.</span> <span class="nav-text">ArrayList是如何实现的？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ArrayList实现类"><span class="nav-number">2.1.</span> <span class="nav-text">ArrayList实现类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ArrayList属性"><span class="nav-number">2.2.</span> <span class="nav-text">ArrayList属性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ArrayList构造函数"><span class="nav-number">2.3.</span> <span class="nav-text">ArrayList构造函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ArrayList新增元素"><span class="nav-number">2.4.</span> <span class="nav-text">ArrayList新增元素</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ArrayList删除元素"><span class="nav-number">2.5.</span> <span class="nav-text">ArrayList删除元素</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ArrayList遍历元素"><span class="nav-number">2.6.</span> <span class="nav-text">ArrayList遍历元素</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LinkedList是如何实现的？"><span class="nav-number">3.</span> <span class="nav-text">LinkedList是如何实现的？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#LinkedList实现类"><span class="nav-number">3.1.</span> <span class="nav-text">LinkedList实现类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LinkedList属性"><span class="nav-number">3.2.</span> <span class="nav-text">LinkedList属性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LinkedList新增元素"><span class="nav-number">3.3.</span> <span class="nav-text">LinkedList新增元素</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LinkedList删除元素"><span class="nav-number">3.4.</span> <span class="nav-text">LinkedList删除元素</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LinkedList遍历元素"><span class="nav-number">3.5.</span> <span class="nav-text">LinkedList遍历元素</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#最后"><span class="nav-number">4.</span> <span class="nav-text">最后</span></a></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
-      
-
-      
-
-    </div>
-  </aside>
-
-
-        
-      </div>
-    </main>
-
-    <footer id="footer" class="footer">
-      <div class="footer-inner">
-        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-<div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
-  <span class="with-love">
-    <i class="fa fa-snowflake-o"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">wangwren</span>
-
-  
-</div>
-
-
-  <div class="powered-by">
-    <i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
-      本站访客数:<span id="busuanzi_value_site_uv"></span>
-    </span>
-  </div>
-
-  <!-- <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div> -->
-
-
-
-  <!-- <span class="post-meta-divider">|</span> -->
-
-
-
-  <!-- <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div> -->
-
-
-
-
-<div class="theme-info">
-  <div class="powered-by"></div>
-  <span class="post-count">博客全站共21.3k字</span>
-</div>
-        
-
-
-
-
-
-
-
-        
-      </div>
-    </footer>
-
-    
-      <div class="back-to-top">
-        <i class="fa fa-arrow-up"></i>
-        
-      </div>
-    
-
-    
-
-  </div>
-
-  
-
-<script type="text/javascript">
-  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
-    window.Promise = null;
-  }
-</script>
-
-
-
-
-
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-  
-  
-    <script type="text/javascript" src="//cdn.jsdelivr.net/jquery/2.1.3/jquery.min.js"></script>
-  
-
-  
-  
-    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
-  
-
-  
-  
-    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
-  
-
-  
-  
-    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
-  
-
-  
-  
-    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
-  
-
-  
-  
-    <script type="text/javascript" src="//cdn.jsdelivr.net/fancybox/2.1.5/jquery.fancybox.pack.js"></script>
-  
-
-
-  
-
-
-  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
-
-  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
-
-
-
-  
-  
-
-
-  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
-
-  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
-
-
-
-  
-  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
-<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
-
-
-
-  
-
-
-  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
-
-
-
-  
-
-
-  
-
-
-
-
-	
-
-
-
-
-
-  
-
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
-  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
-  
-  <script type="text/javascript">
-    var GUEST = ['nick','mail','link'];
-    var guest = 'nick,mail,link';
-    guest = guest.split(',').filter(item=>{
-      return GUEST.indexOf(item)>-1;
-    });
-    new Valine({
-        el: '#comments' ,
-        verify: false,
-        notify: false,
-        appId: 'AjP5BYHXzMS81kEXA8BapGg5-gzGzoHsz',
-        appKey: '38YDBtc6pkKIugk4avv1W0Dn',
-        placeholder: '说点什么？',
-        avatar:'mm',
-        guest_info:guest,
-        pageSize:'10' || 10,
-    });
-  </script>
-
-
-
-  
-
-
-
-
-
-  
-
-  
-
-  
-
-  
-  
-
-  
-
-  
-
-  
-
-
-  
-   <canvas class="fireworks" style="position: fixed;left: 0;top: 0;z-index: 1; pointer-events: none;"></canvas> 
-   <script type="text/javascript" src="//cdn.bootcss.com/animejs/2.2.0/anime.min.js"></script> 
-   <script type="text/javascript" src="/js/src/fireworks.js"></script>
-
-   undefined
-<script src="/live2dw/lib/L2Dwidget.min.js?0c58a1486de42ac6cc1c59c7d98ae887"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/haru02.model.json"},"display":{"position":"right","width":100,"height":200},"mobile":{"show":true}});</script></body>
-</html>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">wangwren</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://yoursite.com/2019/08/ArrayList还是LinkedList？使用不当性能差千倍/">http://yoursite.com/2019/08/ArrayList还是LinkedList？使用不当性能差千倍/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://yoursite.com">计科一班</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/java/">java    </a></div><div class="post_share"><div class="social-share" data-image="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/avatar.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js@1.0.16/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js@1.0.16/dist/js/social-share.min.js"></script></div></div><div class="post-reward"><a class="reward-buttom"><i class="fa fa-qrcode"></i> 打赏<div class="reward-main"><ul class="reward-all"><li class="reward-item"><img class="lozad post-qr-code__img" src="/img/wechat.jpg"><div class="post-qr-code__desc">微信</div></li></ul></div></a></div><nav class="pagination_post" id="pagination"><div class="prev-post pull-left"><a href="/2019/08/Spring循环依赖的解决办法——带源码分析/"><img class="prev_cover lozad" data-src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="onerror=null;src='/img/404.jpg'"><div class="label">上一篇</div><div class="prev_info"><span>Spring循环依赖的解决办法——带源码分析</span></div></a></div><div class="next-post pull-right"><a href="/2019/07/Java字符串性能优化/"><img class="next_cover lozad" data-src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="onerror=null;src='/img/404.jpg'"><div class="label">下一篇</div><div class="next_info"><span>Java字符串性能优化</span></div></a></div></nav><div class="relatedPosts"><div class="relatedPosts_headline"><i class="fa fa-fw fa-thumbs-up" aria-hidden="true"></i><span> 相关推荐</span></div><div class="relatedPosts_list"><div class="relatedPosts_item"><a href="/2019/02/Spring事务的传播行为/" title="Spring事务的传播行为"><img class="relatedPosts_cover lozad" data-src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png"><div class="relatedPosts_title">Spring事务的传播行为</div></a></div><div class="relatedPosts_item"><a href="/2019/04/Transactional事务注解问题/" title="Transactional事务注解问题"><img class="relatedPosts_cover lozad" data-src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png"><div class="relatedPosts_title">Transactional事务注解问题</div></a></div><div class="relatedPosts_item"><a href="/2019/02/foreach遍历集合时进行remove操作的问题/" title="foreach遍历集合时进行remove操作的问题"><img class="relatedPosts_cover lozad" data-src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png"><div class="relatedPosts_title">foreach遍历集合时进行remove操作的问题</div></a></div></div><div class="clear_both"></div></div><hr><div id="post-comment"><div class="comment_headling"><i class="fa fa-comments fa-fw" aria-hidden="true"></i><span> 评论</span></div><div class="vcomment" id="vcomment"></div><script src="https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js"></script><script>var notify = false == true ? true : false;
+var verify = false == true ? true : false;
+var GUEST_INFO = ['nick','mail','link'];
+var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+  return GUEST_INFO.indexOf(item) > -1
+});
+guest_info = guest_info.length == 0 ? GUEST_INFO :guest_info;
+
+window.valine = new Valine({
+  el:'#vcomment',
+  notify:notify,
+  verify:verify,
+  appId:'',
+  appKey:'',
+  placeholder:'说点什么？',
+  avatar:'mm',
+  guest_info:guest_info,
+  pageSize:'10',
+  lang:'',
+  recordIP: true
+});</script></div></div></div><footer><div id="footer"><div class="copyright">&copy;2018 - 2019 By wangwren</div><div class="framework-info"><span>驱动 </span><a href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>主题 </span><a href="https://github.com/jerryc127/hexo-theme-butterfly"><span>Butterfly</span></a></div><div class="footer_custom_text">Hi, welcome to my <a href="https://wangwren.com/">blog</a>!</div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><section class="rightside" id="rightside"><a id="to_comment" href="#post-comment"><i class="scroll_to_comment fa fa-comments"></i></a><i class="fa fa-book" id="readmode" title="阅读模式"> </i><i class="fa fa-plus" id="font_plus" title="放大字体"></i><i class="fa fa-minus" id="font_minus" title="缩小字体"></i><a class="translate_chn_to_cht" id="translateLink" href="javascript:translatePage();" title="简繁转换">简</a><i class="nightshift fa fa-moon-o" id="nightshift" title="夜间模式"></i></section><div class=" " id="post_bottom"><div id="post_bottom_items"><a id="mobile_to_comment" href="#post-comment"><i class="mobile_scroll_to_comment fa fa-comments"></i></a><i class="fa fa-list" id="mobile_toc"></i><div id="toc_mobile"><div class="toc_mobile_headline">目录</div><ol class="toc_mobile_items"><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#初始List接口"><span class="toc_mobile_items-number">1.</span> <span class="toc_mobile_items-text">初始List接口</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#ArrayList是如何实现的？"><span class="toc_mobile_items-number">2.</span> <span class="toc_mobile_items-text">ArrayList是如何实现的？</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#ArrayList实现类"><span class="toc_mobile_items-number">2.1.</span> <span class="toc_mobile_items-text">ArrayList实现类</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#ArrayList属性"><span class="toc_mobile_items-number">2.2.</span> <span class="toc_mobile_items-text">ArrayList属性</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#ArrayList构造函数"><span class="toc_mobile_items-number">2.3.</span> <span class="toc_mobile_items-text">ArrayList构造函数</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#ArrayList新增元素"><span class="toc_mobile_items-number">2.4.</span> <span class="toc_mobile_items-text">ArrayList新增元素</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#ArrayList删除元素"><span class="toc_mobile_items-number">2.5.</span> <span class="toc_mobile_items-text">ArrayList删除元素</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#ArrayList遍历元素"><span class="toc_mobile_items-number">2.6.</span> <span class="toc_mobile_items-text">ArrayList遍历元素</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#LinkedList是如何实现的？"><span class="toc_mobile_items-number">3.</span> <span class="toc_mobile_items-text">LinkedList是如何实现的？</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#LinkedList实现类"><span class="toc_mobile_items-number">3.1.</span> <span class="toc_mobile_items-text">LinkedList实现类</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#LinkedList属性"><span class="toc_mobile_items-number">3.2.</span> <span class="toc_mobile_items-text">LinkedList属性</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#LinkedList新增元素"><span class="toc_mobile_items-number">3.3.</span> <span class="toc_mobile_items-text">LinkedList新增元素</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#LinkedList删除元素"><span class="toc_mobile_items-number">3.4.</span> <span class="toc_mobile_items-text">LinkedList删除元素</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#LinkedList遍历元素"><span class="toc_mobile_items-number">3.5.</span> <span class="toc_mobile_items-text">LinkedList遍历元素</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#最后"><span class="toc_mobile_items-number">4.</span> <span class="toc_mobile_items-text">最后</span></a></li></ol></div></div></div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="/js/third-party/fireworks.js"></script><script src="/js/nightshift.js"></script><script id="ribbon" src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/js/piao.js"></script><script src="/js/activate-power-mode.js"></script><script>POWERMODE.colorful = true; // make power mode colorful
+POWERMODE.shake = true; // turn off shake
+document.body.addEventListener('input', POWERMODE);
+</script><script src="/js/tw_cn.js"></script><script>translateInitilization()
+
+</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@1.2.2/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/lozad/dist/lozad.min.js"></script><script>const observer = lozad(); // lazy loads elements with default selector as '.lozad'
+observer.observe();</script><script src="/live2dw/lib/L2Dwidget.min.js?0c58a1486de42ac6cc1c59c7d98ae887"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/haru02.model.json"},"display":{"position":"right","width":100,"height":200},"mobile":{"show":true}});</script></body></html>

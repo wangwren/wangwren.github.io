@@ -1,384 +1,31 @@
-<!DOCTYPE html>
-
-
-
-  
-
-
-<html class="theme-next pisces use-motion" lang="zh-Hans">
-<head><meta name="generator" content="Hexo 3.8.0">
-  <script src="https://wangwren.github.io/live2d/autoload.js"></script>
-  <meta charset="UTF-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<meta name="theme-color" content="#222">
-
-
-
-
-
-
-
-
-
-<meta http-equiv="Cache-Control" content="no-transform">
-<meta http-equiv="Cache-Control" content="no-siteapp">
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.8.0"><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><title>Spring循环依赖的解决办法——带源码分析 | 计科一班</title><meta name="description" content="Spring循环依赖的解决办法——带源码分析"><meta name="keywords" content="Spring"><meta name="author" content="wangwren"><meta name="copyright" content="wangwren"><meta name="format-detection" content="telephone=no"><link rel="shortcut icon" href="/img/favicon.ico"><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><meta http-equiv="x-dns-prefetch-control" content="on"><link rel="canonical" href="http://yoursite.com/2019/08/Spring循环依赖的解决办法——带源码分析/"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Spring循环依赖的解决办法——带源码分析"><meta name="twitter:description" content="Spring循环依赖的解决办法——带源码分析"><meta name="twitter:image" content="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/avatar.jpg"><meta property="og:type" content="article"><meta property="og:title" content="Spring循环依赖的解决办法——带源码分析"><meta property="og:url" content="http://yoursite.com/2019/08/Spring循环依赖的解决办法——带源码分析/"><meta property="og:site_name" content="计科一班"><meta property="og:description" content="Spring循环依赖的解决办法——带源码分析"><meta property="og:image" content="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/avatar.jpg"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link rel="next" title="ArrayList还是LinkedList？使用不当性能差千倍" href="http://yoursite.com/2019/08/ArrayList还是LinkedList？使用不当性能差千倍/"><link rel="dns-prefetch" href="https://hm.baidu.com"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?7fc95d12325ed0a8c439b341403f1c29";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":0,"cookieDomain":"http://wangwren.com/","msgToTraditionalChinese":"繁体","msgToSimplifiedChinese":"简"},
+  highlight_copy: 'false',
+  highlight_lang: 'true',
+  highlight_shrink: 'false',
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  bookmark: {
+    title: '添加书签',
+    message_prev: '按',
+    message_next: '键将本页加入书签'
+  },
+  runtime_unit: '天'
 
   
-  
-    
-  
-  <link href="//cdn.jsdelivr.net/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet" type="text/css">
-
-
-
-
-
-
-
-<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
-
-<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
-
-
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico?v=5.1.4">
-
-
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=5.1.4">
-
-
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico?v=5.1.4">
-
-
-  <link rel="mask-icon" href="/images/favicon.ico?v=5.1.4" color="#222">
-
-
-
-
-
-  <meta name="keywords" content="Spring,">
-
-
-
-
-
-  <link rel="alternate" href="/atom.xml" title="计科一班" type="application/atom+xml">
-
-
-
-
-
-
-<meta name="description" content="原文链接：Spring IOC 容器源码分析 - 循环依赖的解决办法  Spring循环依赖的解决办法前言在工作中，经常由于设计不佳或各种原因，导致类之间相互依赖。这些类可能单独使用时不会出现问题，但是在使用Spring进行管理的时候可能就会抛出BeanCurrentlyInCreationException等异常。当抛出这种异常时表示Spring解决不了该循环依赖。本文将说明Spring对于循">
-<meta name="keywords" content="Spring">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Spring循环依赖的解决办法——带源码分析">
-<meta property="og:url" content="http://yoursite.com/2019/08/Spring循环依赖的解决办法——带源码分析/index.html">
-<meta property="og:site_name" content="计科一班">
-<meta property="og:description" content="原文链接：Spring IOC 容器源码分析 - 循环依赖的解决办法  Spring循环依赖的解决办法前言在工作中，经常由于设计不佳或各种原因，导致类之间相互依赖。这些类可能单独使用时不会出现问题，但是在使用Spring进行管理的时候可能就会抛出BeanCurrentlyInCreationException等异常。当抛出这种异常时表示Spring解决不了该循环依赖。本文将说明Spring对于循">
-<meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/19/15661414284048.jpg">
-<meta property="og:image" content="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/19/15661420151148.jpg">
-<meta property="og:image" content="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/19/15661424021985.jpg">
-<meta property="og:image" content="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/19/15661424661030.jpg">
-<meta property="og:image" content="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/19/15661427916452.jpg">
-<meta property="og:image" content="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/19/15661441201580.jpg">
-<meta property="og:image" content="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/19/15661441567496.jpg">
-<meta property="og:image" content="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/19/15661443268459.jpg">
-<meta property="og:image" content="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/19/15661464513115.jpg">
-<meta property="og:image" content="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/19/15661493884854.jpg">
-<meta property="og:updated_time" content="2019-08-19T14:42:44.287Z">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Spring循环依赖的解决办法——带源码分析">
-<meta name="twitter:description" content="原文链接：Spring IOC 容器源码分析 - 循环依赖的解决办法  Spring循环依赖的解决办法前言在工作中，经常由于设计不佳或各种原因，导致类之间相互依赖。这些类可能单独使用时不会出现问题，但是在使用Spring进行管理的时候可能就会抛出BeanCurrentlyInCreationException等异常。当抛出这种异常时表示Spring解决不了该循环依赖。本文将说明Spring对于循">
-<meta name="twitter:image" content="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/19/15661414284048.jpg">
-
-
-
-<script type="text/javascript" id="hexo.configurations">
-  var NexT = window.NexT || {};
-  var CONFIG = {
-    root: '/',
-    scheme: 'Pisces',
-    version: '5.1.4',
-    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
-    fancybox: true,
-    tabs: true,
-    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
-    duoshuo: {
-      userId: '0',
-      author: '博主'
-    },
-    algolia: {
-      applicationID: '',
-      apiKey: '',
-      indexName: '',
-      hits: {"per_page":10},
-      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
-    }
-  };
-</script>
-
-
-
-  <link rel="canonical" href="http://yoursite.com/2019/08/Spring循环依赖的解决办法——带源码分析/">
-
-
-
-
-
-  <title>Spring循环依赖的解决办法——带源码分析 | 计科一班</title>
-  
-
-
-
-
-
-  <script type="text/javascript">
-    var _hmt = _hmt || [];
-    (function() {
-      var hm = document.createElement("script");
-      hm.src = "https://hm.baidu.com/hm.js?7fc95d12325ed0a8c439b341403f1c29";
-      var s = document.getElementsByTagName("script")[0];
-      s.parentNode.insertBefore(hm, s);
-    })();
-  </script>
-
-
-
-
-</head>
-
-<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
-
-  
-  
-    
-  
-
-  <div class="container sidebar-position-left page-post-detail">
-    <div class="headband"></div>
-
-    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-wrapper">
-  <div class="site-meta ">
-    
-
-    <div class="custom-logo-site-title">
-      <a href="/" class="brand" rel="start">
-        <span class="logo-line-before"><i></i></span>
-        <span class="site-title">计科一班</span>
-        <span class="logo-line-after"><i></i></span>
-      </a>
-    </div>
-      
-        <p class="site-subtitle">DebugDog</p>
-      
-  </div>
-
-  <div class="site-nav-toggle">
-    <button>
-      <span class="btn-bar"></span>
-      <span class="btn-bar"></span>
-      <span class="btn-bar"></span>
-    </button>
-  </div>
-</div>
-
-<nav class="site-nav">
-  
-
-  
-    <ul id="menu" class="menu">
-      
-        
-        <li class="menu-item menu-item-home">
-          <a href="/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
-            
-            首页
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-about">
-          <a href="/about/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
-            
-            关于
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-tags">
-          <a href="/tags/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
-            
-            标签
-          </a>
-        </li>
-      
-
-      
-    </ul>
-  
-
-  
-</nav>
-
-
-
- </div>
-    </header>
-
-    <main id="main" class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          <div id="content" class="content">
-            
-
-  <div id="posts" class="posts-expand">
-    
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/Spring循环依赖的解决办法——带源码分析/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="wangwren">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/a.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="计科一班">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">Spring循环依赖的解决办法——带源码分析</h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-19T22:41:20+08:00">
-                2019-08-19
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2019/08/Spring循环依赖的解决办法——带源码分析/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2019/08/Spring循环依赖的解决办法——带源码分析/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  4k
-                </span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
-                
-                <span title="阅读时长">
-                  16
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        <blockquote>
+}</script></head><body><canvas class="fireworks"></canvas><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div class="auto_open" id="sidebar"><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Spring循环依赖的解决办法"><span class="toc-number">1.</span> <span class="toc-text">Spring循环依赖的解决办法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#简介"><span class="toc-number">1.2.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#循环依赖的产生和解决的前提"><span class="toc-number">1.3.</span> <span class="toc-text">循环依赖的产生和解决的前提</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#背景知识"><span class="toc-number">1.4.</span> <span class="toc-text">背景知识</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#什么是循环依赖"><span class="toc-number">1.4.1.</span> <span class="toc-text">什么是循环依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#一些缓存的介绍"><span class="toc-number">1.4.2.</span> <span class="toc-text">一些缓存的介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#回顾获取bean的过程"><span class="toc-number">1.4.3.</span> <span class="toc-text">回顾获取bean的过程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#源码分析"><span class="toc-number">1.5.</span> <span class="toc-text">源码分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">1.6.</span> <span class="toc-text">参考文章</span></a></li></ol></li></ol></div></div></div><div id="content-outer"><div id="top-container" style="background-image: url(https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/Photo/post.png)"><div id="page-header"><span class="pull-left"> <a class="blog_title" id="site-name" href="/">计科一班</a></span><div class="open toggle-menu pull-right"><div class="menu-icon-first"></div><div class="menu-icon-second"></div><div class="menu-icon-third"></div></div><div class="menu_mask"></div><span class="pull-right menus"><div class="mobile_author_icon"><img class="lozad avatar_img" src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'"></div><div class="mobile_post_data"><div class="mobile_data_item text-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">11</div></a></div></div><div class="mobile_data_item text-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">标签</div><div class="length_num">7</div></a></div></div></div><hr><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> 关于</span></a></div><script>document.body.addEventListener('touchstart', function(){ });</script></div></span><span class="pull-right"></span></div><div id="post-info"><div id="post-title"><div class="posttitle">Spring循环依赖的解决办法——带源码分析</div></div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 发表于 2019-08-19<span class="post-meta__separator">|</span><i class="fa fa-history" aria-hidden="true"></i> 更新于 2019-08-19</time><div class="post-meta-wordcount"><span>字数总计: </span><span class="word-count">4k</span><span class="post-meta__separator">|</span><span>阅读时长: 14 分钟</span><span class="post-meta__separator">|</span><span>阅读量: </span><span id="busuanzi_value_page_pv"></span></div></div></div></div><div class="layout layout_post" id="content-inner">   <article id="post"><div class="article-container" id="post-content"><blockquote>
 <p>原文链接：<a href="https://www.tianxiaobo.com/2018/06/08/Spring-IOC-容器源码分析-循环依赖的解决办法/" target="_blank" rel="noopener">Spring IOC 容器源码分析 - 循环依赖的解决办法</a></p>
 </blockquote>
 <h1 id="Spring循环依赖的解决办法"><a href="#Spring循环依赖的解决办法" class="headerlink" title="Spring循环依赖的解决办法"></a>Spring循环依赖的解决办法</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在工作中，经常由于设计不佳或各种原因，导致类之间相互依赖。这些类可能单独使用时不会出现问题，但是在使用Spring进行管理的时候可能就会抛出<code>BeanCurrentlyInCreationException</code>等异常。当抛出这种异常时表示Spring解决不了该循环依赖。本文将说明Spring对于循环依赖的解决方法。</p>
@@ -394,13 +41,13 @@
 <li>A的某个field或者setter依赖了B的实例对象，同时B的某个field或者setter依赖了A的实例对象，以及反之。</li>
 </ul>
 <p>当然，Spring对于循环依赖的解决不是无条件的，首先前提条件是针对scope单例并且没有显示指明不需要解决循环依赖的对象，而且要求该对象没有被代理过。同时Spring解决循环依赖也不是万能，以上三种情况只能解决两种，第一种在构造方法中相互依赖的情况Spring也无力回天。(知道了以下解决方案就明白为什么第一种情况无法解决了)。</p>
-<h2 id="背景知识"><a href="#背景知识" class="headerlink" title="背景知识"></a>背景知识</h2><h3 id="什么是循环依赖"><a href="#什么是循环依赖" class="headerlink" title="什么是循环依赖"></a>什么是循环依赖</h3><p>所谓的循环依赖是指 A依赖B，B又依赖A，它们之间形成了循环依赖。或者是 A依赖B，B依赖C，C又依赖A。<br><img src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/19/15661414284048.jpg" alt=""></p>
+<h2 id="背景知识"><a href="#背景知识" class="headerlink" title="背景知识"></a>背景知识</h2><h3 id="什么是循环依赖"><a href="#什么是循环依赖" class="headerlink" title="什么是循环依赖"></a>什么是循环依赖</h3><p>所谓的循环依赖是指 A依赖B，B又依赖A，它们之间形成了循环依赖。或者是 A依赖B，B依赖C，C又依赖A。<br><img alt="" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/19/15661414284048.jpg" class="lozad"></p>
 <p>这里以两个类直接相互依赖为例，它们的实现代码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BeanB</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> BeanA beanA;</span><br><span class="line">    <span class="comment">// 省略 getter/setter</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BeanA</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> BeanB beanB;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>配置信息如下：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"beanA"</span> <span class="attr">class</span>=<span class="string">"xyz.coolblog.BeanA"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"beanB"</span> <span class="attr">ref</span>=<span class="string">"beanB"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"beanB"</span> <span class="attr">class</span>=<span class="string">"xyz.coolblog.BeanB"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"beanA"</span> <span class="attr">ref</span>=<span class="string">"beanA"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
 <p>IOC容器在读到上面的配置时，会按照顺序，先去实例化beanA。然后发现beanA依赖于beanB，接着又去实例化beanB。实例化beanB时，发现beanB又依赖于beanA。如果容器不处理循环依赖的话，容器会无限执行上面的流程，直到内存溢出，程序崩溃。</p>
 <p>当然，Spring是不会让这种情况发生的。在容器再次发现beanB依赖于beanA时，容器会获取beanA对象的一个<em>早期引用</em>(early reference)，并把这个早期引用注入到beanB中，让beanB先完成实例化。beanB完成实例化，beanA就可以获取到beanB的引用，beanA随之完成实例化。</p>
 <p><em>早期引用</em>这个概念在接下来会讲。</p>
-<h3 id="一些缓存的介绍"><a href="#一些缓存的介绍" class="headerlink" title="一些缓存的介绍"></a>一些缓存的介绍</h3><p>在进行源码分析前，先来看一组缓存的定义。<br><img src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/19/15661420151148.jpg" alt=""></p>
+<h3 id="一些缓存的介绍"><a href="#一些缓存的介绍" class="headerlink" title="一些缓存的介绍"></a>一些缓存的介绍</h3><p>在进行源码分析前，先来看一组缓存的定义。<br><img alt="" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/19/15661420151148.jpg" class="lozad"></p>
 <table>
 <thead>
 <tr>
@@ -428,10 +75,10 @@
 </ul>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** Room 包含了一些电器 */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Room</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String television;</span><br><span class="line">    <span class="keyword">private</span> String airConditioner;</span><br><span class="line">    <span class="keyword">private</span> String refrigerator;</span><br><span class="line">    <span class="keyword">private</span> String washer;</span><br><span class="line">    <span class="comment">// 省略 getter/setter</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>配置：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"room"</span> <span class="attr">class</span>=<span class="string">"xyz.coolblog.demo.Room"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"television"</span> <span class="attr">value</span>=<span class="string">"Xiaomi"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"airConditioner"</span> <span class="attr">value</span>=<span class="string">"Gree"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"refrigerator"</span> <span class="attr">value</span>=<span class="string">"Haier"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"washer"</span> <span class="attr">value</span>=<span class="string">"Siemens"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
-<p>我们先看一下完全实例化好后的bean长什么样：<br><img src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/19/15661424021985.jpg" alt=""></p>
-<p>从调试信息中可以看得出，Room的每个成员变量都被赋值了。然后再看一下<em>原始的bean对象</em>长什么样：<br><img src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/19/15661424661030.jpg" alt=""></p>
+<p>我们先看一下完全实例化好后的bean长什么样：<br><img alt="" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/19/15661424021985.jpg" class="lozad"></p>
+<p>从调试信息中可以看得出，Room的每个成员变量都被赋值了。然后再看一下<em>原始的bean对象</em>长什么样：<br><img alt="" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/19/15661424661030.jpg" class="lozad"></p>
 <p>结果就比较明显了，所有字段都是 null。这里的bean和上面的bean指向的是同一个对象<code>Room@1567</code>，但现在这个对象所有字段都是null，我们把这种对象称为原始的对象。</p>
-<h3 id="回顾获取bean的过程"><a href="#回顾获取bean的过程" class="headerlink" title="回顾获取bean的过程"></a>回顾获取bean的过程</h3><p>本节，我们来了解从Spring IOC容器中获取bean实例的流程(简化版)。<br><img src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/19/15661427916452.jpg" alt=""></p>
+<h3 id="回顾获取bean的过程"><a href="#回顾获取bean的过程" class="headerlink" title="回顾获取bean的过程"></a>回顾获取bean的过程</h3><p>本节，我们来了解从Spring IOC容器中获取bean实例的流程(简化版)。<br><img alt="" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/19/15661427916452.jpg" class="lozad"></p>
 <p>先来简单介绍一下这张图，这图是一个简化后的流程图。开始流程图中只有一条执行路径，在条件<code>sharedInstance != null</code>这里出现了岔路，形成了绿色和红色两条路径。在上图中，读取/添加缓存的方法使用蓝色狂和☆标注了出来。</p>
 <ul>
 <li>这个流程从<code>getBean</code>方法开始，<code>getBean</code>是一个空壳方法，所有逻辑都在<code>doGetBean</code>方法中。</li>
@@ -451,9 +98,9 @@
 <li><code>getObject</code>执行完成后，会返回完全实例化好的bean。紧跟着再调用<code>addSingleton</code>把完全实例化好的bean对象放入缓存中。</li>
 <li>到这里，红色执行路径差不多也就要结束。</li>
 </ul>
-<p>这里没有把<code>getObject</code>、<code>addSingleton</code>方法和<code>getSingleton(String,ObjectFactory)</code>并列画在红色的路径里，目的是想简化一下方法的调用栈。可以进一步简化上面的调用流程：<br><img src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/19/15661441201580.jpg" alt=""></p>
-<p>这里我贴出几个源码：<br><img src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/19/15661441567496.jpg" alt=""></p>
-<p><img src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/19/15661443268459.jpg" alt=""></p>
+<p>这里没有把<code>getObject</code>、<code>addSingleton</code>方法和<code>getSingleton(String,ObjectFactory)</code>并列画在红色的路径里，目的是想简化一下方法的调用栈。可以进一步简化上面的调用流程：<br><img alt="" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/19/15661441201580.jpg" class="lozad"></p>
+<p>这里我贴出几个源码：<br><img alt="" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/19/15661441567496.jpg" class="lozad"></p>
+<p><img alt="" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/19/15661443268459.jpg" class="lozad"></p>
 <h2 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h2><p>经过前面的铺垫，现在终于可以深入源码一探究竟了。依次来看一下循环依赖相关的代码。如下：(通过上面截图，也标注出了类名，有兴趣可以点进去看，都一样，只是以下代码原博主加上了注释，讲的很详细。)<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> &lt;T&gt; <span class="function">T <span class="title">doGetBean</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="keyword">final</span> String name, <span class="keyword">final</span> Class&lt;T&gt; requiredType, <span class="keyword">final</span> Object[] args, <span class="keyword">boolean</span> typeCheckOnly)</span></span></span><br><span class="line"><span class="function">            <span class="keyword">throws</span> BeansException </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ...... </span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 从缓存中获取 bean 实例</span></span><br><span class="line">    Object sharedInstance = getSingleton(beanName);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ......</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//getSingleton(beanName)方法与doGetBean方法并不在同一个类中。</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Object <span class="title">getSingleton</span><span class="params">(String beanName)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> getSingleton(beanName, <span class="keyword">true</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">protected</span> Object <span class="title">getSingleton</span><span class="params">(String beanName, <span class="keyword">boolean</span> allowEarlyReference)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 从 singletonObjects 获取实例，singletonObjects 中的实例都是准备好的 bean 实例，可以直接使用</span></span><br><span class="line">    Object singletonObject = <span class="keyword">this</span>.singletonObjects.get(beanName);</span><br><span class="line">    <span class="comment">// 判断 beanName 对应的 bean 是否正在创建中</span></span><br><span class="line">    <span class="keyword">if</span> (singletonObject == <span class="keyword">null</span> &amp;&amp; isSingletonCurrentlyInCreation(beanName)) &#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (<span class="keyword">this</span>.singletonObjects) &#123;</span><br><span class="line">            <span class="comment">// 从 earlySingletonObjects 中获取提前曝光的 bean</span></span><br><span class="line">            singletonObject = <span class="keyword">this</span>.earlySingletonObjects.get(beanName);</span><br><span class="line">            <span class="keyword">if</span> (singletonObject == <span class="keyword">null</span> &amp;&amp; allowEarlyReference) &#123;</span><br><span class="line">                <span class="comment">// 获取相应的 bean 工厂</span></span><br><span class="line">                ObjectFactory&lt;?&gt; singletonFactory = <span class="keyword">this</span>.singletonFactories.get(beanName);</span><br><span class="line">                <span class="keyword">if</span> (singletonFactory != <span class="keyword">null</span>) &#123;</span><br><span class="line">                    <span class="comment">// 提前曝光 bean 实例（raw bean），用于解决循环依赖</span></span><br><span class="line">                    singletonObject = singletonFactory.getObject();</span><br><span class="line">                    </span><br><span class="line">                    <span class="comment">// 将 singletonObject 放入缓存中，并将 singletonFactory 从缓存中移除</span></span><br><span class="line">                    <span class="keyword">this</span>.earlySingletonObjects.put(beanName, singletonObject);</span><br><span class="line">                    <span class="keyword">this</span>.singletonFactories.remove(beanName);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> (singletonObject != NULL_OBJECT ? singletonObject : <span class="keyword">null</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>上面的源码中，<code>doGetBean</code>所调用的方法<code>getSingleton(String)</code>是一个空壳方法，其主要逻辑在<code>getSingleton(String,boolean)</code>中。该方法逻辑比较简单：</p>
 <ul>
@@ -471,7 +118,7 @@
 <li>第一步操作是调用<code>getObject</code>创建bean实例。</li>
 <li>第二步是调用<code>addSingleton</code>方法将创建好的bean放入缓存中。代码逻辑并不复杂。</li>
 </ul>
-<p>接下来继续看，这次分析的是<code>doCreateBean</code>中的一些逻辑。(这个方法上面说过了，是在<code>getSingelton(String,ObjectFactory)</code>的<code>getObject</code><br>方法中内部调用了<code>createBean</code>之后<code>createBean</code>又调用了<code>doCreateBean</code>。<br><img src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/19/15661464513115.jpg" alt=""></p>
+<p>接下来继续看，这次分析的是<code>doCreateBean</code>中的一些逻辑。(这个方法上面说过了，是在<code>getSingelton(String,ObjectFactory)</code>的<code>getObject</code><br>方法中内部调用了<code>createBean</code>之后<code>createBean</code>又调用了<code>doCreateBean</code>。<br><img alt="" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/19/15661464513115.jpg" class="lozad"></p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> Object <span class="title">doCreateBean</span><span class="params">(<span class="keyword">final</span> String beanName, <span class="keyword">final</span> RootBeanDefinition mbd, <span class="keyword">final</span> Object[] args)</span></span></span><br><span class="line"><span class="function">        <span class="keyword">throws</span> BeanCreationException </span>&#123;</span><br><span class="line"></span><br><span class="line">    BeanWrapper instanceWrapper = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ......</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// ☆ 创建 bean 对象，并将 bean 对象包裹在 BeanWrapper 对象中返回</span></span><br><span class="line">    instanceWrapper = createBeanInstance(beanName, mbd, args);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 从 BeanWrapper 对象中获取 bean 对象，这里的 bean 指向的是一个原始的对象</span></span><br><span class="line">    <span class="keyword">final</span> Object bean = (instanceWrapper != <span class="keyword">null</span> ? instanceWrapper.getWrappedInstance() : <span class="keyword">null</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">     * earlySingletonExposure 用于表示是否”提前暴露“原始对象的引用，用于解决循环依赖。</span></span><br><span class="line"><span class="comment">     * 对于单例 bean，该变量一般为 true。更详细的解释可以参考我之前的文章</span></span><br><span class="line"><span class="comment">     */</span> </span><br><span class="line">    <span class="keyword">boolean</span> earlySingletonExposure = (mbd.isSingleton() &amp;&amp; <span class="keyword">this</span>.allowCircularReferences &amp;&amp;</span><br><span class="line">            isSingletonCurrentlyInCreation(beanName));</span><br><span class="line">    <span class="keyword">if</span> (earlySingletonExposure) &#123;</span><br><span class="line">        <span class="comment">// ☆ 添加 bean 工厂对象到 singletonFactories 缓存中</span></span><br><span class="line">        addSingletonFactory(beanName, <span class="keyword">new</span> ObjectFactory&lt;Object&gt;() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> Object <span class="title">getObject</span><span class="params">()</span> <span class="keyword">throws</span> BeansException </span>&#123;</span><br><span class="line">                <span class="comment">/* </span></span><br><span class="line"><span class="comment">                 * 获取原始对象的早期引用，在 getEarlyBeanReference 方法中，会执行 AOP </span></span><br><span class="line"><span class="comment">                 * 相关逻辑。若 bean 未被 AOP 拦截，getEarlyBeanReference 原样返回 </span></span><br><span class="line"><span class="comment">                 * bean，所以大家可以把 </span></span><br><span class="line"><span class="comment">                 *      return getEarlyBeanReference(beanName, mbd, bean) </span></span><br><span class="line"><span class="comment">                 * 等价于：</span></span><br><span class="line"><span class="comment">                 *      return bean;</span></span><br><span class="line"><span class="comment">                 */</span></span><br><span class="line">                <span class="keyword">return</span> getEarlyBeanReference(beanName, mbd, bean);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Object exposedObject = bean;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ......</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// ☆ 填充属性，解析依赖</span></span><br><span class="line">    populateBean(beanName, mbd, instanceWrapper);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ......</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 返回 bean 实例</span></span><br><span class="line">    <span class="keyword">return</span> exposedObject;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">addSingletonFactory</span><span class="params">(String beanName, ObjectFactory&lt;?&gt; singletonFactory)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">synchronized</span> (<span class="keyword">this</span>.singletonObjects) &#123;</span><br><span class="line">        <span class="keyword">if</span> (!<span class="keyword">this</span>.singletonObjects.containsKey(beanName)) &#123;</span><br><span class="line">            <span class="comment">// 将 singletonFactory 添加到 singletonFactories 缓存中</span></span><br><span class="line">            <span class="keyword">this</span>.singletonFactories.put(beanName, singletonFactory);</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 从其他缓存中移除相关记录，即使没有</span></span><br><span class="line">            <span class="keyword">this</span>.earlySingletonObjects.remove(beanName);</span><br><span class="line">            <span class="keyword">this</span>.registeredSingletons.add(beanName);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>上面的代码简化了不少，不过看起来仍有点复杂。好在，上面的代码主线逻辑比较简单，由三个方法组成。如下：</p>
 <ul>
@@ -500,459 +147,33 @@
 </ul>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> Object <span class="title">getSingleton</span><span class="params">(String beanName, <span class="keyword">boolean</span> allowEarlyReference)</span> </span>&#123;</span><br><span class="line">    Object singletonObject = <span class="keyword">this</span>.singletonObjects.get(beanName);</span><br><span class="line">    <span class="keyword">if</span> (singletonObject == <span class="keyword">null</span> &amp;&amp; isSingletonCurrentlyInCreation(beanName)) &#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (<span class="keyword">this</span>.singletonObjects) &#123;</span><br><span class="line">            <span class="comment">// ☆ 从缓存中获取早期引用</span></span><br><span class="line">            singletonObject = <span class="keyword">this</span>.earlySingletonObjects.get(beanName);</span><br><span class="line">            <span class="keyword">if</span> (singletonObject == <span class="keyword">null</span> &amp;&amp; allowEarlyReference) &#123;</span><br><span class="line">                ObjectFactory&lt;?&gt; singletonFactory = <span class="keyword">this</span>.singletonFactories.get(beanName);</span><br><span class="line">                <span class="keyword">if</span> (singletonFactory != <span class="keyword">null</span>) &#123;</span><br><span class="line">                    <span class="comment">// ☆ 从 SingletonFactory 中获取早期引用</span></span><br><span class="line">                    singletonObject = singletonFactory.getObject();</span><br><span class="line">                    </span><br><span class="line">                    <span class="keyword">this</span>.earlySingletonObjects.put(beanName, singletonObject);</span><br><span class="line">                    <span class="keyword">this</span>.singletonFactories.remove(beanName);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> (singletonObject != NULL_OBJECT ? singletonObject : <span class="keyword">null</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>接着上面的步骤讲，populateBean调用<code>BeanFactory.getBean(&quot;beanA&quot;)</code>以获取beanB的依赖。<code>getBean(&quot;beanA&quot;)</code>会先调用<code>getSingleton(&quot;beanA&quot;)</code>，尝试从缓存中获取beanA。此时由于beanA还没有完全实例化好，于是<code>this.singletonObjects.get(&quot;beanA&quot;)</code>也返回空，因为beanA早期引用还没放入到这个缓存中。最后调用<code>singletonFactory.getObject()</code>返回<code>singletonObject</code>，此时<code>singletonObject != null</code>。<code>singletonObject</code>指向<code>BeanA@1234</code>，也就是<code>createBeanInstance</code>创建的原始对象。此时beanB获取到了这个原始对象的引用，beanB就能顺利完成实例化。beanB完成实例化后，beanA就能获取到beanB所指的实例，beanA随之完成实例化工作。由于beanB.beanA和beanA指向的是同一个对象BeanA@1234，所以beanB中的beanA此时也处于可用状态了。</p>
-<p>以上的过程对应下面的流程图：<br><img src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/19/15661493884854.jpg" alt=""></p>
+<p>以上的过程对应下面的流程图：<br><img alt="" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/2019/08/19/15661493884854.jpg" class="lozad"></p>
 <p>看到这里，你也肯定知道为什么Spring不能解决<em>A的构造方法中依赖B的实例对象，同时B的构造方法中依赖了A的实例对象</em>这类问题了。<br>因为Spring只能解决属性之间的循环依赖，看源码就明白，还是需要有<em>前期引用</em>，前期引用属性为null，但是还是需要创建该对象，创建对象那就需要用构造方法，构造方法中循环依赖，通过上面分析的源码，Spring肯定解决不了了。因为缓存中连<em>前期引用</em>都没有。</p>
 <h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a href="https://www.jianshu.com/p/6c359768b1dc" target="_blank" rel="noopener">Spring源码初探-IOC(4)-Bean的初始化-循环依赖的解决</a></p>
-
-      
-    </div>
-    
-    
-    
-
-    <div>
-      
-        <div>
-    
-        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fas fa-dog"></i>感谢您的阅读-------------</div>
-    
-</div>
-      
-    </div>
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-        <div class="post-tags">
-          
-            <a href="/tags/Spring/" rel="tag"><i class="fa fa-tag"></i> Spring</a>
-          
-        </div>
-      
-
-      
-      
-      
-
-      
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-            
-              <a href="/2019/08/ArrayList还是LinkedList？使用不当性能差千倍/" rel="next" title="ArrayList还是LinkedList？使用不当性能差千倍">
-                <i class="fa fa-chevron-left"></i> ArrayList还是LinkedList？使用不当性能差千倍
-              </a>
-            
-          </div>
-
-          <span class="post-nav-divider"></span>
-
-          <div class="post-nav-prev post-nav-item">
-            
-          </div>
-        </div>
-      
-
-      
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-
-    <div class="post-spread">
-      
-    </div>
-  </div>
-
-
-          </div>
-          
-
-
-          
-
-  
-    <div class="comments" id="comments">
-    </div>
-  
-
-
-
-        </div>
-        
-          
-  
-  <div class="sidebar-toggle">
-    <div class="sidebar-toggle-line-wrap">
-      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-    </div>
-  </div>
-
-  <aside id="sidebar" class="sidebar">
-    
-    <div class="sidebar-inner">
-
-      
-
-      
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            站点概览
-          </li>
-        </ul>
-      
-
-      <section class="site-overview-wrap sidebar-panel">
-        <div class="site-overview">
-          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-            
-              <img class="site-author-image" itemprop="image" src="/uploads/a.jpg" alt="wangwren">
-            
-              <p class="site-author-name" itemprop="name">wangwren</p>
-              <p class="site-description motion-element" itemprop="description">记录笔记，写点东西</p>
-          </div>
-
-          <nav class="site-state motion-element">
-
-            
-              <div class="site-state-item site-state-posts">
-              
-                <a href="/archives">
-              
-                  <span class="site-state-item-count">11</span>
-                  <span class="site-state-item-name">日志</span>
-                </a>
-              </div>
-            
-
-            
-
-            
-              
-              
-              <div class="site-state-item site-state-tags">
-                <a href="/tags/index.html">
-                  <span class="site-state-item-count">7</span>
-                  <span class="site-state-item-name">标签</span>
-                </a>
-              </div>
-            
-
-          </nav>
-
-          
-            <div class="feed-link motion-element">
-              <a href="/atom.xml" rel="alternate">
-                <i class="fa fa-rss"></i>
-                RSS
-              </a>
-            </div>
-          
-
-          
-            <div class="links-of-author motion-element">
-                
-                  <span class="links-of-author-item">
-                    <a href="https://github.com/wangwren" target="_blank" title="GitHub">
-                      
-                        <i class="fa fa-fw fa-github"></i>GitHub</a>
-                  </span>
-                
-                  <span class="links-of-author-item">
-                    <a href="mailto:wangwren0906@163.com" target="_blank" title="E-Mail">
-                      
-                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
-                  </span>
-                
-            </div>
-          
-
-          
-          
-
-          
-          
-
-          
-
-        </div>
-      </section>
-
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring循环依赖的解决办法"><span class="nav-number">1.</span> <span class="nav-text">Spring循环依赖的解决办法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#简介"><span class="nav-number">1.2.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#循环依赖的产生和解决的前提"><span class="nav-number">1.3.</span> <span class="nav-text">循环依赖的产生和解决的前提</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#背景知识"><span class="nav-number">1.4.</span> <span class="nav-text">背景知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是循环依赖"><span class="nav-number">1.4.1.</span> <span class="nav-text">什么是循环依赖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一些缓存的介绍"><span class="nav-number">1.4.2.</span> <span class="nav-text">一些缓存的介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#回顾获取bean的过程"><span class="nav-number">1.4.3.</span> <span class="nav-text">回顾获取bean的过程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#源码分析"><span class="nav-number">1.5.</span> <span class="nav-text">源码分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文章"><span class="nav-number">1.6.</span> <span class="nav-text">参考文章</span></a></li></ol></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
-      
-
-      
-
-    </div>
-  </aside>
-
-
-        
-      </div>
-    </main>
-
-    <footer id="footer" class="footer">
-      <div class="footer-inner">
-        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-<div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
-  <span class="with-love">
-    <i class="fa fa-snowflake-o"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">wangwren</span>
-
-  
-</div>
-
-
-  <div class="powered-by">
-    <i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
-      本站访客数:<span id="busuanzi_value_site_uv"></span>
-    </span>
-  </div>
-
-  <!-- <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div> -->
-
-
-
-  <!-- <span class="post-meta-divider">|</span> -->
-
-
-
-  <!-- <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div> -->
-
-
-
-
-<div class="theme-info">
-  <div class="powered-by"></div>
-  <span class="post-count">博客全站共21.3k字</span>
-</div>
-        
-
-
-
-
-
-
-
-        
-      </div>
-    </footer>
-
-    
-      <div class="back-to-top">
-        <i class="fa fa-arrow-up"></i>
-        
-      </div>
-    
-
-    
-
-  </div>
-
-  
-
-<script type="text/javascript">
-  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
-    window.Promise = null;
-  }
-</script>
-
-
-
-
-
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-  
-  
-    <script type="text/javascript" src="//cdn.jsdelivr.net/jquery/2.1.3/jquery.min.js"></script>
-  
-
-  
-  
-    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
-  
-
-  
-  
-    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
-  
-
-  
-  
-    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
-  
-
-  
-  
-    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
-  
-
-  
-  
-    <script type="text/javascript" src="//cdn.jsdelivr.net/fancybox/2.1.5/jquery.fancybox.pack.js"></script>
-  
-
-
-  
-
-
-  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
-
-  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
-
-
-
-  
-  
-
-
-  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
-
-  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
-
-
-
-  
-  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
-<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
-
-
-
-  
-
-
-  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
-
-
-
-  
-
-
-  
-
-
-
-
-	
-
-
-
-
-
-  
-
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
-  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
-  
-  <script type="text/javascript">
-    var GUEST = ['nick','mail','link'];
-    var guest = 'nick,mail,link';
-    guest = guest.split(',').filter(item=>{
-      return GUEST.indexOf(item)>-1;
-    });
-    new Valine({
-        el: '#comments' ,
-        verify: false,
-        notify: false,
-        appId: 'AjP5BYHXzMS81kEXA8BapGg5-gzGzoHsz',
-        appKey: '38YDBtc6pkKIugk4avv1W0Dn',
-        placeholder: '说点什么？',
-        avatar:'mm',
-        guest_info:guest,
-        pageSize:'10' || 10,
-    });
-  </script>
-
-
-
-  
-
-
-
-
-
-  
-
-  
-
-  
-
-  
-  
-
-  
-
-  
-
-  
-
-
-  
-   <canvas class="fireworks" style="position: fixed;left: 0;top: 0;z-index: 1; pointer-events: none;"></canvas> 
-   <script type="text/javascript" src="//cdn.bootcss.com/animejs/2.2.0/anime.min.js"></script> 
-   <script type="text/javascript" src="/js/src/fireworks.js"></script>
-
-   undefined
-<script src="/live2dw/lib/L2Dwidget.min.js?0c58a1486de42ac6cc1c59c7d98ae887"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/haru02.model.json"},"display":{"position":"right","width":100,"height":200},"mobile":{"show":true}});</script></body>
-</html>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">wangwren</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://yoursite.com/2019/08/Spring循环依赖的解决办法——带源码分析/">http://yoursite.com/2019/08/Spring循环依赖的解决办法——带源码分析/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://yoursite.com">计科一班</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Spring/">Spring    </a></div><div class="post_share"><div class="social-share" data-image="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/avatar.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js@1.0.16/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js@1.0.16/dist/js/social-share.min.js"></script></div></div><div class="post-reward"><a class="reward-buttom"><i class="fa fa-qrcode"></i> 打赏<div class="reward-main"><ul class="reward-all"><li class="reward-item"><img class="lozad post-qr-code__img" src="/img/wechat.jpg"><div class="post-qr-code__desc">微信</div></li></ul></div></a></div><nav class="pagination_post" id="pagination"><div class="next-post pull-full"><a href="/2019/08/ArrayList还是LinkedList？使用不当性能差千倍/"><img class="next_cover lozad" data-src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="onerror=null;src='/img/404.jpg'"><div class="label">下一篇</div><div class="next_info"><span>ArrayList还是LinkedList？使用不当性能差千倍</span></div></a></div></nav><div class="relatedPosts"><div class="relatedPosts_headline"><i class="fa fa-fw fa-thumbs-up" aria-hidden="true"></i><span> 相关推荐</span></div><div class="relatedPosts_list"><div class="relatedPosts_item"><a href="/2019/02/Spring事务的传播行为/" title="Spring事务的传播行为"><img class="relatedPosts_cover lozad" data-src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png"><div class="relatedPosts_title">Spring事务的传播行为</div></a></div><div class="relatedPosts_item"><a href="/2019/04/Transactional事务注解问题/" title="Transactional事务注解问题"><img class="relatedPosts_cover lozad" data-src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png"><div class="relatedPosts_title">Transactional事务注解问题</div></a></div></div><div class="clear_both"></div></div><hr><div id="post-comment"><div class="comment_headling"><i class="fa fa-comments fa-fw" aria-hidden="true"></i><span> 评论</span></div><div class="vcomment" id="vcomment"></div><script src="https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js"></script><script>var notify = false == true ? true : false;
+var verify = false == true ? true : false;
+var GUEST_INFO = ['nick','mail','link'];
+var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+  return GUEST_INFO.indexOf(item) > -1
+});
+guest_info = guest_info.length == 0 ? GUEST_INFO :guest_info;
+
+window.valine = new Valine({
+  el:'#vcomment',
+  notify:notify,
+  verify:verify,
+  appId:'',
+  appKey:'',
+  placeholder:'说点什么？',
+  avatar:'mm',
+  guest_info:guest_info,
+  pageSize:'10',
+  lang:'',
+  recordIP: true
+});</script></div></div></div><footer><div id="footer"><div class="copyright">&copy;2018 - 2019 By wangwren</div><div class="framework-info"><span>驱动 </span><a href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>主题 </span><a href="https://github.com/jerryc127/hexo-theme-butterfly"><span>Butterfly</span></a></div><div class="footer_custom_text">Hi, welcome to my <a href="https://wangwren.com/">blog</a>!</div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><section class="rightside" id="rightside"><a id="to_comment" href="#post-comment"><i class="scroll_to_comment fa fa-comments"></i></a><i class="fa fa-book" id="readmode" title="阅读模式"> </i><i class="fa fa-plus" id="font_plus" title="放大字体"></i><i class="fa fa-minus" id="font_minus" title="缩小字体"></i><a class="translate_chn_to_cht" id="translateLink" href="javascript:translatePage();" title="简繁转换">简</a><i class="nightshift fa fa-moon-o" id="nightshift" title="夜间模式"></i></section><div class=" " id="post_bottom"><div id="post_bottom_items"><a id="mobile_to_comment" href="#post-comment"><i class="mobile_scroll_to_comment fa fa-comments"></i></a><i class="fa fa-list" id="mobile_toc"></i><div id="toc_mobile"><div class="toc_mobile_headline">目录</div><ol class="toc_mobile_items"><li class="toc_mobile_items-item toc_mobile_items-level-1"><a class="toc_mobile_items-link" href="#Spring循环依赖的解决办法"><span class="toc_mobile_items-number">1.</span> <span class="toc_mobile_items-text">Spring循环依赖的解决办法</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#前言"><span class="toc_mobile_items-number">1.1.</span> <span class="toc_mobile_items-text">前言</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#简介"><span class="toc_mobile_items-number">1.2.</span> <span class="toc_mobile_items-text">简介</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#循环依赖的产生和解决的前提"><span class="toc_mobile_items-number">1.3.</span> <span class="toc_mobile_items-text">循环依赖的产生和解决的前提</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#背景知识"><span class="toc_mobile_items-number">1.4.</span> <span class="toc_mobile_items-text">背景知识</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#什么是循环依赖"><span class="toc_mobile_items-number">1.4.1.</span> <span class="toc_mobile_items-text">什么是循环依赖</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#一些缓存的介绍"><span class="toc_mobile_items-number">1.4.2.</span> <span class="toc_mobile_items-text">一些缓存的介绍</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#回顾获取bean的过程"><span class="toc_mobile_items-number">1.4.3.</span> <span class="toc_mobile_items-text">回顾获取bean的过程</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#源码分析"><span class="toc_mobile_items-number">1.5.</span> <span class="toc_mobile_items-text">源码分析</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#参考文章"><span class="toc_mobile_items-number">1.6.</span> <span class="toc_mobile_items-text">参考文章</span></a></li></ol></li></ol></div></div></div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="/js/third-party/fireworks.js"></script><script src="/js/nightshift.js"></script><script id="ribbon" src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/js/piao.js"></script><script src="/js/activate-power-mode.js"></script><script>POWERMODE.colorful = true; // make power mode colorful
+POWERMODE.shake = true; // turn off shake
+document.body.addEventListener('input', POWERMODE);
+</script><script src="/js/tw_cn.js"></script><script>translateInitilization()
+
+</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@1.2.2/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/lozad/dist/lozad.min.js"></script><script>const observer = lozad(); // lazy loads elements with default selector as '.lozad'
+observer.observe();</script><script src="/live2dw/lib/L2Dwidget.min.js?0c58a1486de42ac6cc1c59c7d98ae887"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/haru02.model.json"},"display":{"position":"right","width":100,"height":200},"mobile":{"show":true}});</script></body></html>
