@@ -1,0 +1,120 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.8.0"><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><title>02-Zookeeper理论相关——Paxos和ZAB | DebugDog</title><meta name="description" content="02-Zookeeper理论相关——Paxos和ZAB"><meta name="keywords" content="zookeeper"><meta name="author" content="wangwren"><meta name="copyright" content="wangwren"><meta name="format-detection" content="telephone=no"><link rel="shortcut icon" href="/img/favicon.ico"><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><meta http-equiv="x-dns-prefetch-control" content="on"><link rel="canonical" href="http://wangwren.com/2019/09/02-Zookeeper理论相关——Paxos和ZAB/"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="02-Zookeeper理论相关——Paxos和ZAB"><meta name="twitter:description" content="02-Zookeeper理论相关——Paxos和ZAB"><meta name="twitter:image" content="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/LDIU6wP2Pl9FvTHCgxVl.jpg"><meta property="og:type" content="article"><meta property="og:title" content="02-Zookeeper理论相关——Paxos和ZAB"><meta property="og:url" content="http://wangwren.com/2019/09/02-Zookeeper理论相关——Paxos和ZAB/"><meta property="og:site_name" content="DebugDog"><meta property="og:description" content="02-Zookeeper理论相关——Paxos和ZAB"><meta property="og:image" content="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/LDIU6wP2Pl9FvTHCgxVl.jpg"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link rel="next" title="01-Zookeeper集群安装及配置介绍" href="http://wangwren.com/2019/09/01-Zookeeper集群安装及配置介绍/"><link rel="dns-prefetch" href="https://hm.baidu.com"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?7fc95d12325ed0a8c439b341403f1c29";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":0,"cookieDomain":"http://wangwren.com/","msgToTraditionalChinese":"繁体","msgToSimplifiedChinese":"简"},
+  highlight_copy: 'false',
+  highlight_lang: 'true',
+  highlight_shrink: 'false',
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  bookmark: {
+    title: '添加书签',
+    message_prev: '按',
+    message_next: '键将本页加入书签'
+  },
+  runtime_unit: '天'
+
+  
+}</script></head><body><canvas class="fireworks"></canvas><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div class="auto_open" id="sidebar"><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Paxos和ZAB"><span class="toc-number">1.</span> <span class="toc-text">Paxos和ZAB</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Paxos算法"><span class="toc-number">1.1.</span> <span class="toc-text">Paxos算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ZAB协议"><span class="toc-number">1.2.</span> <span class="toc-text">ZAB协议</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#协议介绍"><span class="toc-number">1.3.</span> <span class="toc-text">协议介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#消息广播"><span class="toc-number">1.3.1.</span> <span class="toc-text">消息广播</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#崩溃恢复"><span class="toc-number">1.3.2.</span> <span class="toc-text">崩溃恢复</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#zookeeper选主流程-basic-paxos"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">zookeeper选主流程(basic paxos)</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#zookeeper选主流程-fast-paxos"><span class="toc-number">1.3.2.2.</span> <span class="toc-text">zookeeper选主流程(fast paxos)</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#数据同步"><span class="toc-number">1.3.3.</span> <span class="toc-text">数据同步</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#小结"><span class="toc-number">1.3.4.</span> <span class="toc-text">小结</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#zookeeper工作原理"><span class="toc-number">1.3.4.1.</span> <span class="toc-text">zookeeper工作原理</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">2.</span> <span class="toc-text">参考文章</span></a></li></ol></div></div></div><div id="content-outer"><div id="top-container" style="background-image: url(https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/LDIU6wP2Pl9FvTHCgxVl.jpg)"><div id="page-header"><span class="pull-left"> <a class="blog_title" id="site-name" href="/">DebugDog</a></span><div class="open toggle-menu pull-right"><div class="menu-icon-first"></div><div class="menu-icon-second"></div><div class="menu-icon-third"></div></div><div class="menu_mask"></div><span class="pull-right menus"><div class="mobile_author_icon"><img class="lozad avatar_img" src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/avatar2.jpg" onerror="onerror=null;src='/img/friend_404.gif'"></div><div class="mobile_post_data"><div class="mobile_data_item text-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">14</div></a></div></div><div class="mobile_data_item text-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">标签</div><div class="length_num">7</div></a></div></div></div><hr><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> 关于</span></a></div><script>document.body.addEventListener('touchstart', function(){ });</script></div></span><span class="pull-right"></span></div><div id="post-info"><div id="post-title"><div class="posttitle">02-Zookeeper理论相关——Paxos和ZAB</div></div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 发表于 2019-09-26<span class="post-meta__separator">|</span><i class="fa fa-history" aria-hidden="true"></i> 更新于 2019-09-26</time><div class="post-meta-wordcount"><span>字数总计: </span><span class="word-count">2.5k</span><span class="post-meta__separator">|</span><span>阅读时长: 7 分钟</span><span class="post-meta__separator">|</span><span>阅读量: </span><span id="busuanzi_value_page_pv"></span></div></div></div></div><div class="layout layout_post" id="content-inner">   <article id="post"><div class="article-container" id="post-content"><blockquote>
+<p> 攘其外必先安其内</p>
+</blockquote>
+<h2 id="Paxos和ZAB"><a href="#Paxos和ZAB" class="headerlink" title="Paxos和ZAB"></a>Paxos和ZAB</h2><h3 id="Paxos算法"><a href="#Paxos算法" class="headerlink" title="Paxos算法"></a>Paxos算法</h3><p><a href="https://www.douban.com/note/208430424/" target="_blank" rel="noopener">Zookeeper全解析——Paxos作为灵魂</a></p>
+<p>关于Paxos算法相关介绍和讲解的可以看上面链接的文章，通俗易懂，去看完再看该篇剩下的。</p>
+<h3 id="ZAB协议"><a href="#ZAB协议" class="headerlink" title="ZAB协议"></a>ZAB协议</h3><ul>
+<li>事实上，zk并没有完全采用Paxos 算法，而是使用了Zookeeper Atomic Broadcast即<strong>zookeeper原子广播协议</strong>作为其数据一致的核心算法。</li>
+<li>ZAB是为zk专门设计的<strong>支持崩崩溃恢复的原子广播</strong>。</li>
+<li>zk主要依赖ZAB协议来实现分布式数据的一致性。基于该协议，<strong>zk实现了一种主备模式的系统架构来保持集群中各副本之间数据的一致性</strong>。<ul>
+<li>具体的，zk使用一个单一的主进程来接收并处理client的所有事务请求，并采用ZAB原子广播协议，将server数据的状态变更为事务 Proposa(提案)的形式广播到所有的副本进程上。</li>
+<li>顺序性：由于顺序执行的状态变更前后会存在一定的依赖关系，ZAB协议需要保证保证若一个状态变更被处理时，所有其依赖的状态变更都应该已经被处理了。</li>
+<li>高可用性：考虑到主进程可能崩溃，ZAB协议还需要在主进程崩溃时保持正常工作。</li>
+</ul>
+</li>
+</ul>
+<h3 id="协议介绍"><a href="#协议介绍" class="headerlink" title="协议介绍"></a>协议介绍</h3><ul>
+<li>ZAB协议包括两种基本的模式，分别是<strong>崩溃恢复</strong>和<strong>消息广播</strong>。</li>
+<li>当整个服务框架在启动过程中，或是当leader服务器出现网络中断、崩溃退出与重启等异常情况时，<strong>ZAB协议就会进入恢复模式并选举产生新的leader服务器</strong>。当选举产生了新的leader服务器，同时集群中<strong>已有过半</strong>的机器(follwoer)与leader完成状态同步(即数据同步，用以保证集群中存在过半的机器与leader的数据状态保持一致)后，退出恢复模式。</li>
+<li>过半机器同步完成后，整个服务框架就可以进入<strong>消息广播模式</strong>了。启动后新加入的机器会自觉进入数据恢复模式(即找到leader并进行数据同步)。</li>
+<li><strong>leader server是唯一允许处理事务请求的机器</strong>，若其他机器接收到client的事务请求，会将该请求转发给leader；接着，leader会生成相应的事务提案并发起一轮广播协议。</li>
+</ul>
+<h4 id="消息广播"><a href="#消息广播" class="headerlink" title="消息广播"></a>消息广播</h4><ul>
+<li>ZAB协议的消息广播过程使用的是一个<strong>原子广播协议</strong>，类似于一个<strong>二阶段提交</strong>过程。</li>
+<li>当过半的follower反馈ack之后就可以提交事务Proposal(提案)了。</li>
+<li>但是该模型无法处理leader崩溃退出而带来的数据不一致问题。因此，在ZAB协议中添加了另一模式，即采用<strong>崩溃恢复模式</strong>来解决这个问题。</li>
+<li>另外，整个消息广播协议是<strong>基于具有FIFO特性的TCP协议来进行网络通信的</strong>，因此能够很容易地保证消息广播过程中消息接收与发送的顺序性。(zk采用单一主线程来处理client请求)</li>
+<li>在整个消息广播中，leader服务器会为每个事物请求生成对应的Proposal(提案)来进行广播，并且在广播事物Proposal之前，为Proposal分配一个全局单调递增的唯一ID，即<strong>事物ID(ZXID)</strong>。</li>
+<li>具体而言，在消息广播过程中，leader server会为每个follower分配一个单独的<strong>队列</strong>，然后将需要广播的事务proposal依次放入这些队列中，并且根据FIFO策略发送消息。每个follower接收到proposal后，会首先将其<strong>以事务日志形式写入本地磁盘</strong>，并且在成功写入后(ack)反馈给leader。<strong>当leader收到超过半数的ack后，会广播一个commit消息</strong>给所有的follower以通知其进行事务提交，同时leader自身也会完成对事务的提交，尔follower也会在接收到commit消息后，完成对事务的提交。(提交至内存)</li>
+</ul>
+<p>整个消息广播流程本质上是一个2PC(两阶段提交)过程：</p>
+<ol>
+<li>leader发送事务proposal –&gt; follower将proposal以事务形式写入本地磁盘，并且反馈ack给leader。</li>
+<li>leader在收到半数ack后，会广播一个commit消息给所有follower –&gt; leader完成事务提交  –&gt; follower完成事务的提交。</li>
+</ol>
+<p><img alt="" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img2019-09-25_14-08-31.png" class="lozad"> </p>
+<h4 id="崩溃恢复"><a href="#崩溃恢复" class="headerlink" title="崩溃恢复"></a>崩溃恢复</h4><p>当leader崩溃或者leader是去大多数的follower，这时候zk进入恢复模式，恢复模式需要重新选举一个新的leader，让所有的server都恢复到一个正确的状态。  </p>
+<p>zk的选举算法有两种：一种是基于basic paxos实现的，另外一种是基于fast paxos实现的。系统默认的选举算法是fast paxos。</p>
+<h5 id="zookeeper选主流程-basic-paxos"><a href="#zookeeper选主流程-basic-paxos" class="headerlink" title="zookeeper选主流程(basic paxos)"></a>zookeeper选主流程(basic paxos)</h5><ol>
+<li>选举线程由当前server发起选举的线程担任，其主要功能是对投票结果进行统计，并选出推荐的server；</li>
+<li>选举线程首先向所有server发起一次询问(包括自己)；</li>
+<li>选举线程收到回复后，验证是否是自己发起的询问(验证zxid是否一致)，然后获取对方的id(myid)，并存储到当前询问对象列表中，最后获取对方提议的leader相关信息(id,zxid)，并将这些信息存储到当次选举的投票记录表中；</li>
+<li>收到所哟偶server回复后，就计算出zxid最大的那个server，并将这个server相关信息设置成下一次要投票的server；</li>
+<li>线程将当前zxid最大的server设置为当前server要推荐的leader，如果此时获胜的server获得(n/2 + 1)的server票数，设置当前推荐的leader为获胜的server，将根据获胜的server相关信息设置自己的状态，否则，继续这个过程，直到leader被选举出来。</li>
+<li>要使leader获得多数server的支持，则server总数必须是奇数 2n+1，且存活的server的数目不得少于 n+1，每个server启动后都会重复以上流程。在恢复模式下，如果是刚从崩溃状态恢复的或者刚启动的server还会从磁盘快照中恢复数据和会话信息，zk会记录事务日志并定期进行快照，方便在恢复时进行状态恢复。</li>
+</ol>
+<h5 id="zookeeper选主流程-fast-paxos"><a href="#zookeeper选主流程-fast-paxos" class="headerlink" title="zookeeper选主流程(fast paxos)"></a>zookeeper选主流程(fast paxos)</h5><p>fast paxos流程是在选举过程中，某server首先向所有server提议自己要成为leader，当其他server收到提议后，解决epoch和zxid的冲突，并接受对方的提议，然后向对方发送接受提议完成的消息，重复这个流程，最后一定能选举出leader。</p>
+<h4 id="数据同步"><a href="#数据同步" class="headerlink" title="数据同步"></a>数据同步</h4><ul>
+<li>完成leader选举后，在正式开始工作(即接收客户端的事务请求，然后提出新的提案)之前，leader server会首先确认事务日志中的所有proposal是否都已经被集群中过半的机器提交了，即是否完成数据同步。</li>
+<li>ZAB协议的数据同步过程：<ul>
+<li>首先，leader需要确保所有follower能够接收到每一条proposal，并且能正确地将所有已提交的proposal应用到内存数据库中。<ul>
+<li>leader为每个follower准备一个队列，并将未被各follower同步的事务以proposal消息的形式逐个发送给follower，并在每个proposal后紧接着一个commit消息，表明该事务已提交。</li>
+<li>等到follower将其所有尚未同步的事务proposal都从leader上同步过来并成功应用到本地数据库中后，leader会将follower加入到真正的可用follower列表中。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>还需要考虑如何处理那些需要被丢弃的事务proposal：<ul>
+<li>ZAB的事务编号ZXID被设计为一个64位的数字，其中低32位可以看做一个简单的单调递增的计数器，leader在产生一个新的proposal时，都会加 1；而高32位则代表了leader周期epoch(时代)的编号，每当产生一个新的leader，就会从这个leader上取出本地日志最大事务proposal的ZXID，并从该ZXID中解析出对象的epoch值，然后加1作为新的epoch(时代)，<strong>并将低32位置位0来开始生成新的ZXID</strong>。从而，ZAB协议可以通过epoch编号来区分leader周期变化的策略，有效避免不同的leader错误地使用相同的ZXID编号提出不一样的proposal的异常情况。</li>
+<li>基于这样的策略，当一个包含了上一个leader周期中尚未提交的proposal的server启动时肯定无法成为leader，因为其不可能拥有最高ZXID的proposal。那么该server会成为follower，当其连接上leader后，会被leader要求进行回退操作，即回退到一个确实已经被集群中过半机器提交的最新的proposal。</li>
+</ul>
+</li>
+</ul>
+<h4 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h4><h5 id="zookeeper工作原理"><a href="#zookeeper工作原理" class="headerlink" title="zookeeper工作原理"></a>zookeeper工作原理</h5><p>zookeeper的核心是原子广播，这个机制保证了各个server之间的同步。实现这个机制的协议叫做ZAB协议。ZAB协议有两种模式，它们分别是恢复模式(选主)和广播模式(同步)。当服务启动或者在领导者崩溃后，ZAB就进入了恢复模式，当领导者被选举出来，且大多数server完成了和leader的状态同步后，恢复模式就结束了。状态同步保证了leader和server具有相同的系统状态。</p>
+<p>为了保证事务的顺序一致性，zookeeper采用了递增的事务id号(zxid)来标识事务。所有的提议(proposal)都在被提出时加上了zxid。实现中zxid是一个64位的数字，它高32位是epoch用来标识leader关系是否改变，每次一个leader被选出来，它都会有一个新的epoch，标识当前属于哪个leader的统治时期。低32位用于递增计数。</p>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a href="https://www.cnblogs.com/felixzh/p/5869212.html" target="_blank" rel="noopener">Zookeeper的功能以及工作原理</a></p>
+<p><a href="https://www.cnblogs.com/holddie/p/7496223.html" target="_blank" rel="noopener">Zookeeper 扫盲</a></p>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">wangwren</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://wangwren.com/2019/09/02-Zookeeper理论相关——Paxos和ZAB/">http://wangwren.com/2019/09/02-Zookeeper理论相关——Paxos和ZAB/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://wangwren.com">DebugDog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/zookeeper/">zookeeper    </a></div><div class="post_share"><div class="social-share" data-image="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/LDIU6wP2Pl9FvTHCgxVl.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js@1.0.16/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js@1.0.16/dist/js/social-share.min.js"></script></div></div><div class="post-reward"><a class="reward-buttom"><i class="fa fa-qrcode"></i> 打赏<div class="reward-main"><ul class="reward-all"><li class="reward-item"><img class="lozad post-qr-code__img" src="/img/wechat.jpg"><div class="post-qr-code__desc">微信</div></li></ul></div></a></div><nav class="pagination_post" id="pagination"><div class="next-post pull-full"><a href="/2019/09/01-Zookeeper集群安装及配置介绍/"><img class="next_cover lozad" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/LDIU6wP2Pl9FvTHCgxVl.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="label">下一篇</div><div class="next_info"><span>01-Zookeeper集群安装及配置介绍</span></div></a></div></nav><div class="relatedPosts"><div class="relatedPosts_headline"><i class="fa fa-fw fa-thumbs-up" aria-hidden="true"></i><span> 相关推荐</span></div><div class="relatedPosts_list"><div class="relatedPosts_item"><a href="/2019/09/01-Zookeeper集群安装及配置介绍/" title="01-Zookeeper集群安装及配置介绍"><img class="relatedPosts_cover lozad" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/LDIU6wP2Pl9FvTHCgxVl.jpg"><div class="relatedPosts_title">01-Zookeeper集群安装及配置介绍</div></a></div></div><div class="clear_both"></div></div><hr><div id="post-comment"><div class="comment_headling"><i class="fa fa-comments fa-fw" aria-hidden="true"></i><span> 评论</span></div><div class="vcomment" id="vcomment"></div><script src="https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js"></script><script>var notify = false == true ? true : false;
+var verify = false == true ? true : false;
+var GUEST_INFO = ['nick','mail','link'];
+var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+  return GUEST_INFO.indexOf(item) > -1
+});
+guest_info = guest_info.length == 0 ? GUEST_INFO :guest_info;
+
+window.valine = new Valine({
+  el:'#vcomment',
+  notify:notify,
+  verify:verify,
+  appId:'I63inpV0nqSIH11COkHHjX4b-MdYXbMMI',
+  appKey:'Je2JmFDzw7JlTQzTytALACeh',
+  placeholder:'说点什么吧 :)',
+  avatar:'monsterid',
+  guest_info:guest_info,
+  pageSize:'10',
+  lang:'en',
+  recordIP: true
+});</script></div></div></div><footer><div id="footer"><div class="copyright">&copy;2018 - 2019 By wangwren</div><div class="framework-info"><span>驱动 </span><a href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>主题 </span><a href="https://github.com/jerryc127/hexo-theme-butterfly"><span>Butterfly</span></a></div><div class="footer_custom_text">Hi, welcome to my <a href="https://wangwren.com/">blog</a>!</div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><section class="rightside" id="rightside"><a id="to_comment" href="#post-comment"><i class="scroll_to_comment fa fa-comments"></i></a><i class="fa fa-book" id="readmode" title="阅读模式"> </i><i class="fa fa-plus" id="font_plus" title="放大字体"></i><i class="fa fa-minus" id="font_minus" title="缩小字体"></i><a class="translate_chn_to_cht" id="translateLink" href="javascript:translatePage();" title="简繁转换">简</a><i class="nightshift fa fa-moon-o" id="nightshift" title="夜间模式"></i></section><div class=" " id="post_bottom"><div id="post_bottom_items"><a id="mobile_to_comment" href="#post-comment"><i class="mobile_scroll_to_comment fa fa-comments"></i></a><i class="fa fa-list" id="mobile_toc"></i><div id="toc_mobile"><div class="toc_mobile_headline">目录</div><ol class="toc_mobile_items"><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#Paxos和ZAB"><span class="toc_mobile_items-number">1.</span> <span class="toc_mobile_items-text">Paxos和ZAB</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#Paxos算法"><span class="toc_mobile_items-number">1.1.</span> <span class="toc_mobile_items-text">Paxos算法</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#ZAB协议"><span class="toc_mobile_items-number">1.2.</span> <span class="toc_mobile_items-text">ZAB协议</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#协议介绍"><span class="toc_mobile_items-number">1.3.</span> <span class="toc_mobile_items-text">协议介绍</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-4"><a class="toc_mobile_items-link" href="#消息广播"><span class="toc_mobile_items-number">1.3.1.</span> <span class="toc_mobile_items-text">消息广播</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-4"><a class="toc_mobile_items-link" href="#崩溃恢复"><span class="toc_mobile_items-number">1.3.2.</span> <span class="toc_mobile_items-text">崩溃恢复</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-5"><a class="toc_mobile_items-link" href="#zookeeper选主流程-basic-paxos"><span class="toc_mobile_items-number">1.3.2.1.</span> <span class="toc_mobile_items-text">zookeeper选主流程(basic paxos)</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-5"><a class="toc_mobile_items-link" href="#zookeeper选主流程-fast-paxos"><span class="toc_mobile_items-number">1.3.2.2.</span> <span class="toc_mobile_items-text">zookeeper选主流程(fast paxos)</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-4"><a class="toc_mobile_items-link" href="#数据同步"><span class="toc_mobile_items-number">1.3.3.</span> <span class="toc_mobile_items-text">数据同步</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-4"><a class="toc_mobile_items-link" href="#小结"><span class="toc_mobile_items-number">1.3.4.</span> <span class="toc_mobile_items-text">小结</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-5"><a class="toc_mobile_items-link" href="#zookeeper工作原理"><span class="toc_mobile_items-number">1.3.4.1.</span> <span class="toc_mobile_items-text">zookeeper工作原理</span></a></li></ol></li></ol></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#参考文章"><span class="toc_mobile_items-number">2.</span> <span class="toc_mobile_items-text">参考文章</span></a></li></ol></div></div></div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="/js/third-party/fireworks.js"></script><script src="/js/nightshift.js"></script><script id="ribbon" src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/js/piao.js"></script><script src="/js/activate-power-mode.js"></script><script>POWERMODE.colorful = true; // make power mode colorful
+POWERMODE.shake = true; // turn off shake
+document.body.addEventListener('input', POWERMODE);
+</script><script src="/js/tw_cn.js"></script><script>translateInitilization()
+
+</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@1.2.2/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/lozad/dist/lozad.min.js"></script><script>const observer = lozad(); // lazy loads elements with default selector as '.lozad'
+observer.observe();</script><script src="/live2dw/lib/L2Dwidget.min.js?0c58a1486de42ac6cc1c59c7d98ae887"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/haru02.model.json"},"display":{"position":"right","width":100,"height":200},"mobile":{"show":true}});</script></body></html>
