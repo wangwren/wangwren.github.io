@@ -1,0 +1,249 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.8.0"><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><title>彻底搞懂synchronized(从偏向锁到重量级锁) | DebugDog</title><meta name="description" content="彻底搞懂synchronized(从偏向锁到重量级锁)"><meta name="keywords" content="java"><meta name="author" content="wangwren"><meta name="copyright" content="wangwren"><meta name="format-detection" content="telephone=no"><link rel="shortcut icon" href="/img/favicon.ico"><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><meta http-equiv="x-dns-prefetch-control" content="on"><link rel="canonical" href="http://wangwren.com/2019/10/彻底搞懂synchronized-从偏向锁到重量级锁/"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="彻底搞懂synchronized(从偏向锁到重量级锁)"><meta name="twitter:description" content="彻底搞懂synchronized(从偏向锁到重量级锁)"><meta name="twitter:image" content="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/avatar2.jpg"><meta property="og:type" content="article"><meta property="og:title" content="彻底搞懂synchronized(从偏向锁到重量级锁)"><meta property="og:url" content="http://wangwren.com/2019/10/彻底搞懂synchronized-从偏向锁到重量级锁/"><meta property="og:site_name" content="DebugDog"><meta property="og:description" content="彻底搞懂synchronized(从偏向锁到重量级锁)"><meta property="og:image" content="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/avatar2.jpg"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link rel="next" title="并发的核心：CAS 是什么？Java8是如何优化 CAS 的?" href="http://wangwren.com/2019/10/并发的核心：CAS-是什么？Java8是如何优化-CAS-的/"><link rel="dns-prefetch" href="https://hm.baidu.com"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?7fc95d12325ed0a8c439b341403f1c29";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":0,"cookieDomain":"http://wangwren.com/","msgToTraditionalChinese":"繁体","msgToSimplifiedChinese":"简"},
+  highlight_copy: 'false',
+  highlight_lang: 'true',
+  highlight_shrink: 'false',
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  bookmark: {
+    title: '添加书签',
+    message_prev: '按',
+    message_next: '键将本页加入书签'
+  },
+  runtime_unit: '天'
+
+  
+}</script></head><body><canvas class="fireworks"></canvas><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div class="auto_open" id="sidebar"><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#彻底搞懂synchronized-从偏向锁到重量级锁"><span class="toc-number">1.</span> <span class="toc-text">彻底搞懂synchronized(从偏向锁到重量级锁)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#锁对象"><span class="toc-number">1.1.</span> <span class="toc-text">锁对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#偏向锁"><span class="toc-number">1.2.</span> <span class="toc-text">偏向锁</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#那么，什么是偏向锁？"><span class="toc-number">1.2.1.</span> <span class="toc-text">那么，什么是偏向锁？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#锁膨胀"><span class="toc-number">1.3.</span> <span class="toc-text">锁膨胀</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#锁撤销"><span class="toc-number">1.4.</span> <span class="toc-text">锁撤销</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#轻量级锁"><span class="toc-number">1.5.</span> <span class="toc-text">轻量级锁</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#自旋锁"><span class="toc-number">1.5.1.</span> <span class="toc-text">自旋锁</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#自旋锁的一些问题"><span class="toc-number">1.5.1.1.</span> <span class="toc-text">自旋锁的一些问题</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#自适应自旋锁"><span class="toc-number">1.5.2.</span> <span class="toc-text">自适应自旋锁</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#重量级锁"><span class="toc-number">1.6.</span> <span class="toc-text">重量级锁</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#为什么说重量级锁开销大呢"><span class="toc-number">1.6.1.</span> <span class="toc-text">为什么说重量级锁开销大呢</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">1.7.</span> <span class="toc-text">总结</span></a></li></ol></li></ol></div></div></div><div id="content-outer"><div id="top-container" style="background-image: url(https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/bg-17.jpg)"><div id="page-header"><span class="pull-left"> <a class="blog_title" id="site-name" href="/">DebugDog</a></span><div class="open toggle-menu pull-right"><div class="menu-icon-first"></div><div class="menu-icon-second"></div><div class="menu-icon-third"></div></div><div class="menu_mask"></div><span class="pull-right menus"><div class="mobile_author_icon"><img class="lozad avatar_img" src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/avatar2.jpg" onerror="onerror=null;src='/img/friend_404.gif'"></div><div class="mobile_post_data"><div class="mobile_data_item text-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">18</div></a></div></div><div class="mobile_data_item text-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">标签</div><div class="length_num">7</div></a></div></div></div><hr><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> 关于</span></a></div><script>document.body.addEventListener('touchstart', function(){ });</script></div></span><span class="pull-right"></span></div><div id="post-info"><div id="post-title"><div class="posttitle">彻底搞懂synchronized(从偏向锁到重量级锁)</div></div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 发表于 2019-10-15<span class="post-meta__separator">|</span><i class="fa fa-history" aria-hidden="true"></i> 更新于 2019-10-15</time><div class="post-meta-wordcount"><span>字数总计: </span><span class="word-count">3.3k</span><span class="post-meta__separator">|</span><span>阅读时长: 9 分钟</span><span class="post-meta__separator">|</span><span>阅读量: </span><span id="busuanzi_value_page_pv"></span></div></div></div></div><div class="layout layout_post" id="content-inner">   <article id="post"><div class="article-container" id="post-content"><blockquote>
+<p>文章转载自公众号<a href="">苦逼的码农</a>，作者 帅地。<a href="https://mp.weixin.qq.com/s?__biz=Mzg2NzA4MTkxNQ==&amp;mid=2247485257&amp;idx=1&amp;sn=0ab85e4cd8b575fe5c01b269dda007f5&amp;scene=21#wechat_redirect" target="_blank" rel="noopener">原文链接</a> </p>
+</blockquote>
+<p> 最近在学习多线程，被一堆锁弄得很烦，前几天发现一篇文章写的挺好，就转载来。  </p>
+<p>还有<a href="https://github.com/wangwren/JUC" target="_blank" rel="noopener">这是</a>我在学习多线程时的代码，其中也记了一些笔记，可以参考，代码还在持续更新。<a href="https://github.com/wangwren/JUC" target="_blank" rel="noopener">JUC</a></p>
+<h1 id="彻底搞懂synchronized-从偏向锁到重量级锁"><a href="#彻底搞懂synchronized-从偏向锁到重量级锁" class="headerlink" title="彻底搞懂synchronized(从偏向锁到重量级锁)"></a>彻底搞懂synchronized(从偏向锁到重量级锁)</h1><p>接触过线程安全的同学想必都使用过synchronized这个关键字，在java同步代码快中，synchronized的使用方式无非有两个:</p>
+<ul>
+<li>过对一个对象进行加锁来实现同步，如下面代码：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">synchronized</span>(lockObject)&#123;</span><br><span class="line">    <span class="comment">//代码</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>对一个方法进行synchronized声明，进而对一个方法进行加锁来实现同步。如下面代码：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> synchornized <span class="keyword">void</span> <span class="title">test</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="comment">//代码</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>但这里需要指出的是，无论是对一个对象进行加锁还是对一个方法进行加锁，实际上，都是对<strong>对象进行加锁</strong>。</p>
+<p>也就是说，对于第二种方式，实际上虚拟机会根据synchronized修饰的是实例方法还是类方法，去取对应的实例对象或者Class对象来进行加锁。</p>
+<p>对于synchronized这个关键字，可能之前大家有听过，他是一个<strong>重量级锁</strong>，开销很大，建议大家少用点。但大家可能也听说过，但到了jdk1.6之后，该关键字被进行了很多的优化，已经不像以前那样不给力了，建议大家多使用。</p>
+<p>那么它是进行了什么样的优化，才使得synchronized又深得人心呢？为何重量级锁开销就大呢？</p>
+<p>想必大家也都听说过轻量级锁，重量级锁，自旋锁，自适应自旋锁，偏向锁等等，他们都有哪些区别呢？<a href="https://blog.csdn.net/weixin_37948888/article/details/102462562" target="_blank" rel="noopener">重量级锁、自旋锁、轻量级锁、偏向锁、悲观、乐观锁等各种锁</a></p>
+<p>刚才和大家说，锁是加在对象上的，那么一个线程是如何知道这个对象被加了锁呢？又是如何知道它加的是什么类型的锁呢？</p>
+<p>基于这些问题，下面我讲一步一步讲解synchronized是如何被优化的，是如何从偏向锁到重量级锁的。</p>
+<h2 id="锁对象"><a href="#锁对象" class="headerlink" title="锁对象"></a>锁对象</h2><p>刚才我们说，锁实际上是加在对象上的，那么被加了锁的对象我们称之为<strong>锁对象</strong>，在java中，任何一个对象都能成为锁对象。</p>
+<p>为了让大家更好的理解虚拟机是如何知道这个对象就是一个锁对象的，我们下面简单介绍一下java中一个对象的结构。</p>
+<p>java对象在内存中的存储结构主要有一下三个部分：</p>
+<ul>
+<li>对象头</li>
+<li>实例数据</li>
+<li>填充数据</li>
+</ul>
+<p>这里强调一下，<strong>对象头</strong>里的数据主要是一些运行时的数据。</p>
+<p>其简单的结构如下：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">长度</th>
+<th style="text-align:center">内容</th>
+<th style="text-align:center">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">32/64bit</td>
+<td style="text-align:center">Mark Work</td>
+<td style="text-align:center">hashCode,GC分代年龄，锁信息</td>
+</tr>
+<tr>
+<td style="text-align:center">32/64bit</td>
+<td style="text-align:center">Class Metadata Address</td>
+<td style="text-align:center">指向对象类型数据的指针</td>
+</tr>
+<tr>
+<td style="text-align:center">32/64bit</td>
+<td style="text-align:center">Array Length</td>
+<td style="text-align:center">数组的长度(当对象为数组时)</td>
+</tr>
+</tbody>
+</table>
+<p>从该表格中我们可以看到，对象中关于锁的信息是存在Markword里的。</p>
+<p>我们来看一段代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">LockObject lockObject = <span class="keyword">new</span> LockObject();<span class="comment">//随便创建一个对象</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">synchronized</span>(lockObject)&#123;</span><br><span class="line">    <span class="comment">//代码</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当我们创建一个对象LockObject时，该对象的部分Markword关键数据如下：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">bit fields</th>
+<th style="text-align:center">是否偏向锁</th>
+<th style="text-align:center">锁标志位</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">hash</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">01</td>
+</tr>
+</tbody>
+</table>
+<p>从表中可以看出，<strong>偏向锁</strong>的标志位是“01”，状态是“0”，表示该对象还没有被加上偏向锁。（“1”是表示被加上偏向锁）。该对象被创建出来的那一刻，就有了偏向锁的标志位，这也说明了所有对象都是可偏向的，但所有对象的状态都为“0”，也同时说明所有被创建的对象的偏向锁并没有生效。  </p>
+<h2 id="偏向锁"><a href="#偏向锁" class="headerlink" title="偏向锁"></a>偏向锁</h2><p>不过，当线程执行到临界区（critical section）时，此时会利用CAS(Compare and Swap)操作，将线程ID插入到Markword中，同时修改偏向锁的标志位。  </p>
+<blockquote>
+<p>所谓临界区，就是只允许一个线程进去执行操作的区域，即同步代码块。CAS是一个原子性操作</p>
+</blockquote>
+<p>此时的Mark word的结构信息如下：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">bit Fields</th>
+<th style="text-align:center"></th>
+<th style="text-align:center">是否偏向锁</th>
+<th style="text-align:center">锁标志位</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">threadId</td>
+<td style="text-align:center">epoch</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">01</td>
+</tr>
+</tbody>
+</table>
+<p>此时偏向锁的状态为“1”，说明对象的偏向锁生效了，同时也可以看到，哪个线程获得了该对象的锁。</p>
+<h3 id="那么，什么是偏向锁？"><a href="#那么，什么是偏向锁？" class="headerlink" title="那么，什么是偏向锁？"></a>那么，什么是偏向锁？</h3><p>偏向锁是jdk1.6引入的一项锁优化，其中的“偏”是偏心的偏。它的意思就是说，这个锁会偏向于第一个获得它的线程，在接下来的执行过程中，假如该锁没有被其他线程所获取，没有其他线程来竞争该锁，那么持有偏向锁的线程将永远不需要进行同步操作。  </p>
+<p>也就是说:在此线程之后的执行过程中，如果再次进入或者退出同一段同步块代码，并不再需要去进行<strong>加锁</strong>或者<strong>解锁</strong>操作，而是会做以下的步骤：</p>
+<ol>
+<li>Load-and-test，也就是简单判断一下当前线程id是否与Markword当中的线程id是否一致。</li>
+<li>如果一致，则说明此线程已经成功获得了锁，继续执行下面的代码。</li>
+<li>如果不一致，则要检查一下对象是否还是可偏向，即“是否偏向锁”标志位的值。</li>
+<li>如果还未偏向，则利用CAS操作来竞争锁，也即是第一次获取锁时的操作。</li>
+</ol>
+<p>如果此对象已经偏向了，并且不是偏向自己，则说明存在了<strong>竞争</strong>。此时可能就要根据另外线程的情况，可能是重新偏向，也有可能是做偏向撤销，但大部分情况下就是升级成<strong>轻量级锁</strong>了。</p>
+<p>可以看出，偏向锁是针对于一个线程而言的，线程获得锁之后就不会再有解锁等操作了，这样可以省略很多开销。假如有两个线程来竞争该锁话，那么偏向锁就失效了，进而升级成轻量级锁了。</p>
+<p>为什么要这样做呢？因为经验表明，其实大部分情况下，都会是同一个线程进入同一块同步代码块的。这也是为什么会有偏向锁出现的原因。</p>
+<p>在Jdk1.6中，偏向锁的开关是默认开启的，适用于只有一个线程访问同步块的场景。</p>
+<h2 id="锁膨胀"><a href="#锁膨胀" class="headerlink" title="锁膨胀"></a>锁膨胀</h2><p>刚才说了，当出现有两个线程来竞争锁的话，那么偏向锁就失效了，此时锁就会膨胀，升级为轻量级锁。这也是我们经常所说的<strong>锁膨胀</strong>。</p>
+<h2 id="锁撤销"><a href="#锁撤销" class="headerlink" title="锁撤销"></a>锁撤销</h2><p>由于偏向锁失效了，那么接下来就得把该锁撤销，锁撤销的开销花费还是挺大的，其大概的过程如下：</p>
+<ol>
+<li>在一个安全点停止拥有锁的线程。</li>
+<li>遍历线程栈，如果存在锁记录的话，需要修复锁记录和Markword，使其变成无锁状态。</li>
+<li>唤醒当前线程，将当前锁升级成轻量级锁。</li>
+</ol>
+<p>所以，如果某些同步代码块大多数情况下都是有两个及以上的线程竞争的话，那么偏向锁就会是一种累赘，对于这种情况，我们可以一开始就把偏向锁这个默认功能给关闭。</p>
+<h2 id="轻量级锁"><a href="#轻量级锁" class="headerlink" title="轻量级锁"></a>轻量级锁</h2><p>锁撤销升级为轻量级锁之后，那么对象的Markword也会进行相应的的变化。下面先简单描述下锁撤销之后，升级为轻量级锁的过程：</p>
+<ol>
+<li>线程在自己的栈桢中创建锁记录 LockRecord。</li>
+<li>将锁对象的对象头中的MarkWord复制到线程的刚刚创建的锁记录中。</li>
+<li>将锁记录中的Owner指针指向锁对象。</li>
+<li>将锁对象的对象头的MarkWord替换为指向锁记录的指针。</li>
+</ol>
+<p>之后MarkWork标志如下：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">bit fields</th>
+<th style="text-align:center">锁标志位</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">指向LockRecord的指针</td>
+<td style="text-align:center">00</td>
+</tr>
+</tbody>
+</table>
+<p>注意：标志位00表示<strong>轻量级锁</strong>。</p>
+<p>轻量级锁主要有两种：</p>
+<ul>
+<li>自旋锁</li>
+<li>自适应自旋锁</li>
+</ul>
+<h3 id="自旋锁"><a href="#自旋锁" class="headerlink" title="自旋锁"></a>自旋锁</h3><p>所谓自旋，就是指当有另外一个线程来竞争锁时，这个线程会在原地循环等待，而不是把该线程给<strong>阻塞</strong>，直到那个获得锁的线程释放锁之后，这个线程就可以马上获得锁的。</p>
+<p>注意，锁在原地循环的时候，是会消耗cpu的，就相当于在执行一个啥也没有的for循环。</p>
+<p>所以，<strong>轻量级锁适用于那些同步代码块执行的很快的场景，这样，线程原地等待很短很短的时间就能够获得锁了</strong>。</p>
+<p>经验表明，大部分同步代码块执行的时间都是很短很短的，也正是基于这个原因，才有了轻量级锁这么个东西。</p>
+<h4 id="自旋锁的一些问题"><a href="#自旋锁的一些问题" class="headerlink" title="自旋锁的一些问题"></a>自旋锁的一些问题</h4><ol>
+<li>如果同步代码块执行的很慢，需要消耗大量的时间，那么这个时侯，其他线程在原地等待空消耗cpu，这会让人很难受。</li>
+<li>本来一个线程把锁释放之后，当前线程是能够获得锁的，但是假如这个时候有好几个线程都在竞争这个锁的话，那么有可能当前线程会获取不到锁，还得原地等待继续空循环消耗cup，甚至有可能一直获取不到锁。</li>
+</ol>
+<p>基于这个问题，我们必须给线程空循环设置一个次数，当线程超过了这个次数，我们就认为，继续使用自旋锁就不适合了，此时锁会再次膨胀，升级为<strong>重量级锁</strong>。</p>
+<p><strong>默认情况下，自旋的次数为10次，用户可以通过-XX:PreBlockSpin来进行更改</strong>。</p>
+<blockquote>
+<p>自旋锁是在JDK1.4.2的时候引入的</p>
+</blockquote>
+<h3 id="自适应自旋锁"><a href="#自适应自旋锁" class="headerlink" title="自适应自旋锁"></a>自适应自旋锁</h3><p>所谓自适应自旋锁就是线程空循环等待的自旋次数并非是固定的，而是会动态着根据实际情况来改变自旋等待的次数。</p>
+<p>其大概原理是这样的：</p>
+<p>假如一个线程1刚刚成功获得一个锁，当它把锁释放了之后，线程2获得该锁，并且线程2在运行的过程中，此时线程1又想来获得该锁了，但线程2还没有释放该锁，所以线程1只能自旋等待，但是虚拟机认为，<strong>由于线程1刚刚获得过该锁，那么虚拟机觉得线程1这次自旋也是很有可能能够再次成功获得该锁的，所以会延长线程1自旋的次数</strong>。</p>
+<p>另外，如果对于某一个锁，一个线程自旋之后，很少成功获得该锁，那么以后这个线程要获取该锁时，是有可能直接忽略掉自旋过程，直接升级为重量级锁的，以免空循环等待浪费资源。</p>
+<blockquote>
+<p>轻量级锁也被称为<strong>非阻塞同步</strong>、<strong>乐观锁</strong>，因为这个过程并没有把线程阻塞挂起，而是让线程空循环等待，串行执行。</p>
+</blockquote>
+<h2 id="重量级锁"><a href="#重量级锁" class="headerlink" title="重量级锁"></a>重量级锁</h2><p>轻量级锁膨胀之后，就升级为重量级锁了。重量级锁是依赖对象内部的monitor锁来实现的，而monitor又依赖操作系统的MutexLock(互斥锁)来实现的，所以重量级锁也被成为<strong>互斥锁</strong>。</p>
+<p>当轻量级所经过锁撤销等步骤升级为重量级锁之后，它的Markword部分数据大体如下：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">bit fields</th>
+<th style="text-align:center">锁标志位</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">指向Mutex的指针</td>
+<td style="text-align:center">10</td>
+</tr>
+</tbody>
+</table>
+<h3 id="为什么说重量级锁开销大呢"><a href="#为什么说重量级锁开销大呢" class="headerlink" title="为什么说重量级锁开销大呢"></a>为什么说重量级锁开销大呢</h3><p>主要是，当系统检查到锁是重量级锁之后，会把等待想要获得锁的线程进行<strong>阻塞</strong>，被阻塞的线程不会消耗cup。但是阻塞或者唤醒一个线程时，都需要操作系统来帮忙，这就需要从<strong>用户态</strong>转换到<strong>内核态</strong>，而转换状态是需要消耗很多时间的，有可能比用户执行代码的时间还要长。</p>
+<p>这就是说为什么重量级线程开销很大的。</p>
+<blockquote>
+<p>互斥锁(重量级锁)也称为<strong>阻塞同步</strong>、<strong>悲观锁</strong></p>
+</blockquote>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>通过上面的分析，我们知道了为什么synchronized关键字为何又深得人心，也知道了锁的演变过程。</p>
+<p>也就是说，synchronized关键字并非一开始就该对象加上重量级锁，也是从偏向锁，轻量级锁，再到重量级锁的过程。</p>
+<p>这个过程也告诉我们，假如我们一开始就知道某个同步代码块的竞争很激烈、很慢的话，那么我们一开始就应该使用重量级锁了，从而省掉一些锁转换的开销。</p>
+<p>讲到这里就大概完了，希望能对你有所帮助。</p>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">wangwren</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://wangwren.com/2019/10/彻底搞懂synchronized-从偏向锁到重量级锁/">http://wangwren.com/2019/10/彻底搞懂synchronized-从偏向锁到重量级锁/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://wangwren.com">DebugDog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/java/">java    </a></div><div class="post_share"><div class="social-share" data-image="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/avatar2.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js@1.0.16/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js@1.0.16/dist/js/social-share.min.js"></script></div></div><div class="post-reward"><a class="reward-buttom"><i class="fa fa-qrcode"></i> 打赏<div class="reward-main"><ul class="reward-all"><li class="reward-item"><img class="lozad post-qr-code__img" src="/img/wechat.jpg"><div class="post-qr-code__desc">微信</div></li></ul></div></a></div><nav class="pagination_post" id="pagination"><div class="next-post pull-full"><a href="/2019/10/并发的核心：CAS-是什么？Java8是如何优化-CAS-的/"><img class="next_cover lozad" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/page-default.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="label">下一篇</div><div class="next_info"><span>并发的核心：CAS 是什么？Java8是如何优化 CAS 的?</span></div></a></div></nav><div class="relatedPosts"><div class="relatedPosts_headline"><i class="fa fa-fw fa-thumbs-up" aria-hidden="true"></i><span> 相关推荐</span></div><div class="relatedPosts_list"><div class="relatedPosts_item"><a href="/2019/02/Spring事务的传播行为/" title="Spring事务的传播行为"><img class="relatedPosts_cover lozad" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/page-default.jpg"><div class="relatedPosts_title">Spring事务的传播行为</div></a></div><div class="relatedPosts_item"><a href="/2019/04/Transactional事务注解问题/" title="Transactional事务注解问题"><img class="relatedPosts_cover lozad" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/page-default.jpg"><div class="relatedPosts_title">Transactional事务注解问题</div></a></div><div class="relatedPosts_item"><a href="/2019/02/foreach遍历集合时进行remove操作的问题/" title="foreach遍历集合时进行remove操作的问题"><img class="relatedPosts_cover lozad" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/page-default.jpg"><div class="relatedPosts_title">foreach遍历集合时进行remove操作的问题</div></a></div><div class="relatedPosts_item"><a href="/2019/08/ArrayList还是LinkedList？使用不当性能差千倍/" title="ArrayList还是LinkedList？使用不当性能差千倍"><img class="relatedPosts_cover lozad" data-src="https://static001.geekbang.org/resource/image/e0/4d/e0e7e861db0466a5c60d14fe0b5bfe4d.jpg"><div class="relatedPosts_title">ArrayList还是LinkedList？使用不当性能差千倍</div></a></div><div class="relatedPosts_item"><a href="/2019/07/Java字符串性能优化/" title="Java字符串性能优化"><img class="relatedPosts_cover lozad" data-src="https://static001.geekbang.org/resource/image/77/2c/7762cbbafd807bd785d022c17e9f0f2c.jpg"><div class="relatedPosts_title">Java字符串性能优化</div></a></div><div class="relatedPosts_item"><a href="/2019/10/并发的核心：CAS-是什么？Java8是如何优化-CAS-的/" title="并发的核心：CAS 是什么？Java8是如何优化 CAS 的?"><img class="relatedPosts_cover lozad" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/page-default.jpg"><div class="relatedPosts_title">并发的核心：CAS 是什么？Java8是如何优化 CAS 的?</div></a></div></div><div class="clear_both"></div></div><hr><div id="post-comment"><div class="comment_headling"><i class="fa fa-comments fa-fw" aria-hidden="true"></i><span> 评论</span></div><div class="vcomment" id="vcomment"></div><script src="https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js"></script><script>var notify = false == true ? true : false;
+var verify = false == true ? true : false;
+var GUEST_INFO = ['nick','mail','link'];
+var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+  return GUEST_INFO.indexOf(item) > -1
+});
+guest_info = guest_info.length == 0 ? GUEST_INFO :guest_info;
+
+window.valine = new Valine({
+  el:'#vcomment',
+  notify:notify,
+  verify:verify,
+  appId:'I63inpV0nqSIH11COkHHjX4b-MdYXbMMI',
+  appKey:'Je2JmFDzw7JlTQzTytALACeh',
+  placeholder:'说点什么吧 :)',
+  avatar:'monsterid',
+  guest_info:guest_info,
+  pageSize:'10',
+  lang:'en',
+  recordIP: true
+});</script></div></div></div><footer><div id="footer"><div class="copyright">&copy;2018 - 2019 By wangwren</div><div class="framework-info"><span>驱动 </span><a href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>主题 </span><a href="https://github.com/jerryc127/hexo-theme-butterfly"><span>Butterfly</span></a></div><div class="footer_custom_text">Hi, welcome to my <a href="https://wangwren.com/">blog</a>!</div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><section class="rightside" id="rightside"><a id="to_comment" href="#post-comment"><i class="scroll_to_comment fa fa-comments"></i></a><i class="fa fa-book" id="readmode" title="阅读模式"> </i><i class="fa fa-plus" id="font_plus" title="放大字体"></i><i class="fa fa-minus" id="font_minus" title="缩小字体"></i><a class="translate_chn_to_cht" id="translateLink" href="javascript:translatePage();" title="简繁转换">简</a><i class="nightshift fa fa-moon-o" id="nightshift" title="夜间模式"></i></section><div class=" " id="post_bottom"><div id="post_bottom_items"><a id="mobile_to_comment" href="#post-comment"><i class="mobile_scroll_to_comment fa fa-comments"></i></a><i class="fa fa-list" id="mobile_toc"></i><div id="toc_mobile"><div class="toc_mobile_headline">目录</div><ol class="toc_mobile_items"><li class="toc_mobile_items-item toc_mobile_items-level-1"><a class="toc_mobile_items-link" href="#彻底搞懂synchronized-从偏向锁到重量级锁"><span class="toc_mobile_items-number">1.</span> <span class="toc_mobile_items-text">彻底搞懂synchronized(从偏向锁到重量级锁)</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#锁对象"><span class="toc_mobile_items-number">1.1.</span> <span class="toc_mobile_items-text">锁对象</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#偏向锁"><span class="toc_mobile_items-number">1.2.</span> <span class="toc_mobile_items-text">偏向锁</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#那么，什么是偏向锁？"><span class="toc_mobile_items-number">1.2.1.</span> <span class="toc_mobile_items-text">那么，什么是偏向锁？</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#锁膨胀"><span class="toc_mobile_items-number">1.3.</span> <span class="toc_mobile_items-text">锁膨胀</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#锁撤销"><span class="toc_mobile_items-number">1.4.</span> <span class="toc_mobile_items-text">锁撤销</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#轻量级锁"><span class="toc_mobile_items-number">1.5.</span> <span class="toc_mobile_items-text">轻量级锁</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#自旋锁"><span class="toc_mobile_items-number">1.5.1.</span> <span class="toc_mobile_items-text">自旋锁</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-4"><a class="toc_mobile_items-link" href="#自旋锁的一些问题"><span class="toc_mobile_items-number">1.5.1.1.</span> <span class="toc_mobile_items-text">自旋锁的一些问题</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#自适应自旋锁"><span class="toc_mobile_items-number">1.5.2.</span> <span class="toc_mobile_items-text">自适应自旋锁</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#重量级锁"><span class="toc_mobile_items-number">1.6.</span> <span class="toc_mobile_items-text">重量级锁</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#为什么说重量级锁开销大呢"><span class="toc_mobile_items-number">1.6.1.</span> <span class="toc_mobile_items-text">为什么说重量级锁开销大呢</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#总结"><span class="toc_mobile_items-number">1.7.</span> <span class="toc_mobile_items-text">总结</span></a></li></ol></li></ol></div></div></div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="/js/third-party/fireworks.js"></script><script src="/js/nightshift.js"></script><script id="ribbon" src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/js/piao.js"></script><script src="/js/activate-power-mode.js"></script><script>POWERMODE.colorful = true; // make power mode colorful
+POWERMODE.shake = true; // turn off shake
+document.body.addEventListener('input', POWERMODE);
+</script><script src="/js/tw_cn.js"></script><script>translateInitilization()
+
+</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@1.2.2/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/lozad/dist/lozad.min.js"></script><script>const observer = lozad(); // lazy loads elements with default selector as '.lozad'
+observer.observe();</script><script src="/live2dw/lib/L2Dwidget.min.js?0c58a1486de42ac6cc1c59c7d98ae887"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/haru02.model.json"},"display":{"position":"right","width":100,"height":200},"mobile":{"show":true}});</script></body></html>
