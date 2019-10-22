@@ -1,0 +1,425 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.8.0"><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><title>Java高并发与多线程 | DebugDog</title><meta name="description" content="Java高并发与多线程"><meta name="keywords" content="java"><meta name="author" content="wangwren"><meta name="copyright" content="wangwren"><meta name="format-detection" content="telephone=no"><link rel="shortcut icon" href="/img/favicon.ico"><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><meta http-equiv="x-dns-prefetch-control" content="on"><link rel="canonical" href="http://wangwren.com/2019/10/Java高并发与多线程/"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Java高并发与多线程"><meta name="twitter:description" content="Java高并发与多线程"><meta name="twitter:image" content="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/101571754432_.pic.jpg"><meta property="og:type" content="article"><meta property="og:title" content="Java高并发与多线程"><meta property="og:url" content="http://wangwren.com/2019/10/Java高并发与多线程/"><meta property="og:site_name" content="DebugDog"><meta property="og:description" content="Java高并发与多线程"><meta property="og:image" content="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/101571754432_.pic.jpg"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link rel="next" title="ThreadPoolExecutor源码解析" href="http://wangwren.com/2019/10/ThreadPoolExecutor源码解析/"><link rel="dns-prefetch" href="https://hm.baidu.com"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?7fc95d12325ed0a8c439b341403f1c29";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":0,"cookieDomain":"http://wangwren.com/","msgToTraditionalChinese":"繁体","msgToSimplifiedChinese":"简"},
+  highlight_copy: 'false',
+  highlight_lang: 'true',
+  highlight_shrink: 'false',
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  bookmark: {
+    title: '添加书签',
+    message_prev: '按',
+    message_next: '键将本页加入书签'
+  },
+  runtime_unit: '天'
+
+  
+}</script></head><body><canvas class="fireworks"></canvas><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div class="auto_open" id="sidebar"><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#高并发与多线程"><span class="toc-number">1.</span> <span class="toc-text">高并发与多线程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#线程"><span class="toc-number">1.1.</span> <span class="toc-text">线程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#synchronized关键字-悲观锁"><span class="toc-number">1.2.</span> <span class="toc-text">synchronized关键字(悲观锁)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#那什么时候用自旋，什么时候用重量级锁？"><span class="toc-number">1.2.1.</span> <span class="toc-text">那什么时候用自旋，什么时候用重量级锁？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#volatile关键字"><span class="toc-number">1.3.</span> <span class="toc-text">volatile关键字</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CAS-无锁优化-乐观锁、自旋锁"><span class="toc-number">1.4.</span> <span class="toc-text">CAS (无锁优化 乐观锁、自旋锁)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ReentrantLock-重入锁"><span class="toc-number">1.5.</span> <span class="toc-text">ReentrantLock 重入锁</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#synchronized和ReentrantLock有什么不同？"><span class="toc-number">1.5.1.</span> <span class="toc-text">synchronized和ReentrantLock有什么不同？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CountDownLatch-门闩"><span class="toc-number">1.6.</span> <span class="toc-text">CountDownLatch 门闩</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CyclicBarrier-栅栏"><span class="toc-number">1.7.</span> <span class="toc-text">CyclicBarrier(栅栏)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phaser-阶段"><span class="toc-number">1.8.</span> <span class="toc-text">Phaser(阶段)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ReadWriteLock-读写锁"><span class="toc-number">1.9.</span> <span class="toc-text">ReadWriteLock 读写锁</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Semaphore信号量-灯"><span class="toc-number">1.10.</span> <span class="toc-text">Semaphore信号量(灯)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Exchanger"><span class="toc-number">1.11.</span> <span class="toc-text">Exchanger</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LockSupport"><span class="toc-number">1.12.</span> <span class="toc-text">LockSupport</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#淘宝面试题"><span class="toc-number">1.13.</span> <span class="toc-text">淘宝面试题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AQS-重要"><span class="toc-number">1.14.</span> <span class="toc-text">AQS(重要)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#VarHandle-JDK1-9-："><span class="toc-number">1.14.1.</span> <span class="toc-text">VarHandle(JDK1.9)：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ThreadLocal"><span class="toc-number">1.15.</span> <span class="toc-text">ThreadLocal</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#强软弱虚"><span class="toc-number">1.16.</span> <span class="toc-text">强软弱虚</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#强引用"><span class="toc-number">1.16.1.</span> <span class="toc-text">强引用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#软引用-SoftReference"><span class="toc-number">1.16.2.</span> <span class="toc-text">软引用(SoftReference)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#弱引用-WeakReference"><span class="toc-number">1.16.3.</span> <span class="toc-text">弱引用(WeakReference)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#虚引用-PhantomReference"><span class="toc-number">1.16.4.</span> <span class="toc-text">虚引用(PhantomReference)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#容器-这里介绍容器为线程池做准备"><span class="toc-number">1.17.</span> <span class="toc-text">容器(这里介绍容器为线程池做准备)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Map"><span class="toc-number">1.17.1.</span> <span class="toc-text">Map</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Collection"><span class="toc-number">1.17.2.</span> <span class="toc-text">Collection</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#CopyOnWriteList"><span class="toc-number">1.17.2.1.</span> <span class="toc-text">CopyOnWriteList</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Queue"><span class="toc-number">1.17.3.</span> <span class="toc-text">Queue</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#BlockingQueue"><span class="toc-number">1.17.3.1.</span> <span class="toc-text">BlockingQueue</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#DelayQueue"><span class="toc-number">1.17.3.1.1.</span> <span class="toc-text">DelayQueue</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#SynchronusQueue-同步Queue"><span class="toc-number">1.17.3.1.2.</span> <span class="toc-text">SynchronusQueue(同步Queue)</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#TransferQueue"><span class="toc-number">1.17.3.1.3.</span> <span class="toc-text">TransferQueue</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#PriorityQueue"><span class="toc-number">1.17.3.2.</span> <span class="toc-text">PriorityQueue</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#面试题"><span class="toc-number">1.17.4.</span> <span class="toc-text">面试题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#面试题-交替打印"><span class="toc-number">1.18.</span> <span class="toc-text">面试题(交替打印)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#线程池"><span class="toc-number">1.19.</span> <span class="toc-text">线程池</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#两种线程池"><span class="toc-number">1.19.1.</span> <span class="toc-text">两种线程池</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#调整线程池的大小"><span class="toc-number">1.19.1.1.</span> <span class="toc-text">调整线程池的大小</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Executors"><span class="toc-number">1.19.2.</span> <span class="toc-text">Executors</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#SingleThreadExecutor"><span class="toc-number">1.19.2.1.</span> <span class="toc-text">SingleThreadExecutor</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#CachedThreadPool"><span class="toc-number">1.19.2.2.</span> <span class="toc-text">CachedThreadPool</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#FixedThreadPool"><span class="toc-number">1.19.2.3.</span> <span class="toc-text">FixedThreadPool</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ScheduledThreadPool"><span class="toc-number">1.19.2.4.</span> <span class="toc-text">ScheduledThreadPool</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Cached-vs-Fixed"><span class="toc-number">1.19.2.4.1.</span> <span class="toc-text">Cached vs Fixed</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#并发-concurrent-vs-并行-parallel"><span class="toc-number">1.19.3.</span> <span class="toc-text">并发(concurrent) vs 并行(parallel)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TheadPoolExecutor源码解析"><span class="toc-number">1.20.</span> <span class="toc-text">TheadPoolExecutor源码解析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ForkJoinPool"><span class="toc-number">1.20.1.</span> <span class="toc-text">ForkJoinPool</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Fork-Join框架与传统线程池的区别"><span class="toc-number">1.20.1.1.</span> <span class="toc-text">Fork/Join框架与传统线程池的区别</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#WorkStealing"><span class="toc-number">1.20.2.</span> <span class="toc-text">WorkStealing</span></a></li></ol></li></ol></li></ol></div></div></div><div id="content-outer"><div id="top-container" style="background-image: url(https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/101571754432_.pic.jpg)"><div id="page-header"><span class="pull-left"> <a class="blog_title" id="site-name" href="/">DebugDog</a></span><div class="open toggle-menu pull-right"><div class="menu-icon-first"></div><div class="menu-icon-second"></div><div class="menu-icon-third"></div></div><div class="menu_mask"></div><span class="pull-right menus"><div class="mobile_author_icon"><img class="lozad avatar_img" src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/avatar2.jpg" onerror="onerror=null;src='/img/friend_404.gif'"></div><div class="mobile_post_data"><div class="mobile_data_item text-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">20</div></a></div></div><div class="mobile_data_item text-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">标签</div><div class="length_num">7</div></a></div></div></div><hr><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> 关于</span></a></div><script>document.body.addEventListener('touchstart', function(){ });</script></div></span><span class="pull-right"></span></div><div id="post-info"><div id="post-title"><div class="posttitle">Java高并发与多线程</div></div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 发表于 2019-10-22<span class="post-meta__separator">|</span><i class="fa fa-history" aria-hidden="true"></i> 更新于 2019-10-22</time><div class="post-meta-wordcount"><span>字数总计: </span><span class="word-count">5k</span><span class="post-meta__separator">|</span><span>阅读时长: 15 分钟</span><span class="post-meta__separator">|</span><span>阅读量: </span><span id="busuanzi_value_page_pv"></span></div></div></div></div><div class="layout layout_post" id="content-inner">   <article id="post"><div class="article-container" id="post-content"><p>这是最近学习的Java高并发多线程目录，源码在<a href="https://github.com/wangwren/JUC" target="_blank" rel="noopener">JUC</a></p>
+<p>为啥叫JUC？，因为Java并发包名称是<code>java.util.concurrent</code>。</p>
+<h1 id="高并发与多线程"><a href="#高并发与多线程" class="headerlink" title="高并发与多线程"></a>高并发与多线程</h1><p><img alt="juc" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/juc.jpg" class="lozad"></p>
+<h2 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h2><ul>
+<li>线程的创建和启动</li>
+<li>线程的sleep、yield、join</li>
+<li>线程的状态</li>
+</ul>
+<p>代码在 <a href="https://github.com/wangwren/JUC/tree/master/src/main/java/juc/c_000" target="_blank" rel="noopener">c_000</a> 部分。</p>
+<h2 id="synchronized关键字-悲观锁"><a href="#synchronized关键字-悲观锁" class="headerlink" title="synchronized关键字(悲观锁)"></a>synchronized关键字(<strong>悲观锁</strong>)</h2><ul>
+<li><p>synchronized(Object)</p>
+<ul>
+<li>不能用String常量、Integer、Long。</li>
+<li>锁住的是对象</li>
+<li>代码 <a href="https://github.com/wangwren/JUC/tree/master/src/main/java/juc/c_014" target="_blank" rel="noopener">c_014</a> 部分。</li>
+</ul>
+</li>
+<li><p>线程同步</p>
+<ul>
+<li>synchronized锁的是对象，不是代码。</li>
+<li><strong>锁定方法和非锁定方法可以同步进行</strong></li>
+</ul>
+</li>
+<li><p>synchronized优化：代码 <a href="https://github.com/wangwren/JUC/tree/master/src/main/java/juc/c_013" target="_blank" rel="noopener">c_013</a> 部分</p>
+</li>
+</ul>
+<p>synchronized底层实现：</p>
+<ul>
+<li>早期JDK中，synchronized是重量级的，即需要调用操作系统(OS)来申请锁。</li>
+<li><p>后来改进了，有了锁的升级：</p>
+<ul>
+<li>Java虚拟机中并没有严格规定synchronized需要如何实现，只要能满足锁住一个对象，一个一个线程的去执行其中的代码块即可。</li>
+<li>sync(Object)锁住一个对象，这时会markWord，记录这个线程的ID，这时只有一个线程来，其实是没有锁住的，这时是<strong>偏向锁</strong>。即就一个线程，我偏向你。</li>
+<li>当有锁的争用时：升级为<strong>自旋锁</strong>。即另一个线程会在CPU内打转，转圈等着，<strong>自旋10次</strong>，10次之内拿到锁，就拿到了；拿不到就升级，去排队。</li>
+<li>自旋10次之后，升级为重量级锁，OS，需要操作系统了。</li>
+</ul>
+</li>
+<li><p>只有锁的升级，没有锁的降级。</p>
+</li>
+</ul>
+<p><a href="http://wangwren.com/2019/10/%E5%BD%BB%E5%BA%95%E6%90%9E%E6%87%82synchronized-%E4%BB%8E%E5%81%8F%E5%90%91%E9%94%81%E5%88%B0%E9%87%8D%E9%87%8F%E7%BA%A7%E9%94%81/">彻底搞懂synchronized(从偏向锁到重量级锁)</a></p>
+<h3 id="那什么时候用自旋，什么时候用重量级锁？"><a href="#那什么时候用自旋，什么时候用重量级锁？" class="headerlink" title="那什么时候用自旋，什么时候用重量级锁？"></a>那什么时候用自旋，什么时候用重量级锁？</h3><ul>
+<li>执行时间少(加锁代码)，线程数少(如果线程数太多了，用自旋也不行)，用自旋锁；因为每个线程会很快的执行完了。</li>
+<li>执行时间长，线程数多，用系统(OS)锁。重量级锁。</li>
+</ul>
+<p>synchronized代码在<a href="https://github.com/wangwren/JUC/tree/master/src/main/java/juc/c_001" target="_blank" rel="noopener">c_001</a> 至 <a href="https://github.com/wangwren/JUC/tree/master/src/main/java/juc/c_011" target="_blank" rel="noopener">c_011</a> 部分。</p>
+<h2 id="volatile关键字"><a href="#volatile关键字" class="headerlink" title="volatile关键字"></a>volatile关键字</h2><ul>
+<li><p>保证线程间可见</p>
+<ul>
+<li>MESI</li>
+<li>缓存一致性协议</li>
+</ul>
+</li>
+<li><p>禁止指令重排</p>
+<ul>
+<li>DCL单例</li>
+<li>Double Check Lock</li>
+</ul>
+</li>
+</ul>
+<p><strong>可参考内容</strong><a href="http://www.cnblogs.com/nexiyi/p/java_memory_model_and_thread.html" target="_blank" rel="noopener">Java内存模型</a></p>
+<p>volatile代码在 <a href="https://github.com/wangwren/JUC/tree/master/src/main/java/juc/c_012" target="_blank" rel="noopener">c_012</a> 部分<br><a href="https://github.com/wangwren/DesignPatterns/blob/master/src/main/java/com/wangwren/singleton/Singleton05.java" target="_blank" rel="noopener">单例模式–双检锁代码</a></p>
+<h2 id="CAS-无锁优化-乐观锁、自旋锁"><a href="#CAS-无锁优化-乐观锁、自旋锁" class="headerlink" title="CAS (无锁优化 乐观锁、自旋锁)"></a>CAS (无锁优化 <strong>乐观锁、自旋锁</strong>)</h2><p><strong>原子操作</strong></p>
+<ul>
+<li><p>Compare And Set (CAS)</p>
+</li>
+<li><p>操作原理</p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">//V：代表要改的那个值；E:代表期望值；N:代表新值</span><br><span class="line">//只有目前的变量值和所期望的值相等的时候，才会去赋值新值；否则再次尝试或失败</span><br><span class="line">cas(V,E,N)&#123;</span><br><span class="line">    if(V == E)&#123;</span><br><span class="line">        V = N;</span><br><span class="line">    &#125;</span><br><span class="line">    //otherwise try again or fail</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>CAS 的 ABA 问题</li>
+</ul>
+<p>即期望值一开始是A，由于别人操作改成了B，之后又变成了A。<br>解决方式：加version(版本)</p>
+<ul>
+<li>A:1.0</li>
+<li>B:2.0</li>
+<li>A:3.0</li>
+<li>cas(version)</li>
+</ul>
+<p><strong>如果是基础类型(int…)，无所谓；如果是引用类型，比如你和你的前女友复合，你不知道她中间经历了多少男人或女人，你不难受吗</strong>。</p>
+<p>Java的CAS操作，AtomicXXX类，都依靠了Unsafe类。这个类很牛逼，可以像C和C++一样操作内存，但是该类在JDK1.9之后不让用了。</p>
+<ul>
+<li>分段锁<br>LongAdder类</li>
+</ul>
+<p>代码在<a href="https://github.com/wangwren/JUC/tree/master/src/main/java/juc/c_015" target="_blank" rel="noopener">c_015</a>部分。</p>
+<p><a href="http://wangwren.com/2019/10/%E5%B9%B6%E5%8F%91%E7%9A%84%E6%A0%B8%E5%BF%83%EF%BC%9ACAS-%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9FJava8%E6%98%AF%E5%A6%82%E4%BD%95%E4%BC%98%E5%8C%96-CAS-%E7%9A%84/">并发的核心：CAS 是什么？Java8是如何优化 CAS 的?</a></p>
+<h2 id="ReentrantLock-重入锁"><a href="#ReentrantLock-重入锁" class="headerlink" title="ReentrantLock 重入锁"></a>ReentrantLock 重入锁</h2><ul>
+<li>ReentrantLock可用来替代synchronized，使用ReentrantLock可以完成同样的功能。</li>
+<li>注意：使用ReentrantLock<strong>必须要手动释放锁</strong></li>
+<li>使用synchronized时，遇到异常，jvm会自动释放锁；但是使用ReentrantLock需要手动释放，所以经常将锁的释放写在finally中。</li>
+<li>使用reentrantlock可以进行“尝试锁定”tryLock，这样无法锁定，或者在指定时间内无法锁定，线程可以决定是否继续等待。</li>
+<li>使用ReentrantLock还可以调用lockInterruptibly方法，可以对线程interrupt方法做出响应，在一个线程等待锁的过程中，可以被打断。</li>
+<li>ReentrantLock还可以指定为公平锁。</li>
+</ul>
+<h3 id="synchronized和ReentrantLock有什么不同？"><a href="#synchronized和ReentrantLock有什么不同？" class="headerlink" title="synchronized和ReentrantLock有什么不同？"></a>synchronized和ReentrantLock有什么不同？</h3><ul>
+<li>synchronized是系统自带，可以自动加锁，自动解锁；ReentrantLock需要手动加锁，手动解锁。</li>
+<li>ReentrantLock可以出现各种各样的等待队列。synchronized做不到这一点。</li>
+<li>底层实现：<ul>
+<li>ReentrantLock底层是CAS的实现；</li>
+<li>synchronized默认进行了四种锁的状态的升级。</li>
+</ul>
+</li>
+</ul>
+<p>代码在<a href="https://github.com/wangwren/JUC/tree/master/src/main/java/juc/c_016" target="_blank" rel="noopener">c_016</a>部分</p>
+<p><a href="http://wangwren.com/2019/10/%E9%87%8D%E9%87%8F%E7%BA%A7%E9%94%81%E3%80%81%E8%87%AA%E6%97%8B%E9%94%81%E3%80%81%E8%BD%BB%E9%87%8F%E7%BA%A7%E9%94%81%E3%80%81%E5%81%8F%E5%90%91%E9%94%81%E3%80%81%E6%82%B2%E8%A7%82%E3%80%81%E4%B9%90%E8%A7%82%E9%94%81%E7%AD%89%E5%90%84%E7%A7%8D%E9%94%81/">重量级锁、自旋锁、轻量级锁、偏向锁、悲观、乐观锁等各种锁</a></p>
+<h2 id="CountDownLatch-门闩"><a href="#CountDownLatch-门闩" class="headerlink" title="CountDownLatch 门闩"></a>CountDownLatch 门闩</h2><ul>
+<li>应用场景，可以等待其他线程都执行完毕后再继续执行别的操作。使用join方法也可以实现，但是join方法不太好控制。</li>
+<li>真是场景中，我使用过CountDownLatch。开启了十个线程去查询数据，等十个线程都操作完毕后，进行打包下载。</li>
+</ul>
+<p><strong>countDown也不是说只能在一个线程里countDown一下，也可以在一个线程里countDown N多下</strong>，只要到0了，就继续执行剩下代码。</p>
+<p>代码<a href="https://github.com/wangwren/JUC/tree/master/src/main/java/juc/c_017" target="_blank" rel="noopener">c_017</a>部分</p>
+<h2 id="CyclicBarrier-栅栏"><a href="#CyclicBarrier-栅栏" class="headerlink" title="CyclicBarrier(栅栏)"></a>CyclicBarrier(栅栏)</h2><p>代码<a href="https://github.com/wangwren/JUC/tree/master/src/main/java/juc/c_018" target="_blank" rel="noopener">c_018</a>部分</p>
+<h2 id="Phaser-阶段"><a href="#Phaser-阶段" class="headerlink" title="Phaser(阶段)"></a>Phaser(阶段)</h2><p>代码<a href="https://github.com/wangwren/JUC/tree/master/src/main/java/juc/c_019" target="_blank" rel="noopener">c_019</a>部分</p>
+<h2 id="ReadWriteLock-读写锁"><a href="#ReadWriteLock-读写锁" class="headerlink" title="ReadWriteLock 读写锁"></a>ReadWriteLock 读写锁</h2><ul>
+<li><p><strong>共享锁</strong>，读锁就是共享锁，在读的时候大大提高效率。即只要是读操作，就不会阻塞等待锁释放，大家可以一起读。</p>
+</li>
+<li><p><strong>排他锁，互斥锁</strong>，写锁就是排他锁</p>
+</li>
+</ul>
+<p>代码<a href="https://github.com/wangwren/JUC/tree/master/src/main/java/juc/c_020" target="_blank" rel="noopener">c_020</a>部分</p>
+<h2 id="Semaphore信号量-灯"><a href="#Semaphore信号量-灯" class="headerlink" title="Semaphore信号量(灯)"></a>Semaphore信号量(灯)</h2><ul>
+<li>限流，最多的时候我允许你有多少个线程同时运行。</li>
+<li><p>acquire，得到，这是一个阻塞方法，当来一个线程时，调用acquire，信号量减1，信号量为0时，别的线程就得等着。</p>
+</li>
+<li><p>就是用来控制同时运行的线程，比如你有100个线程，但是信号量定为2，表示你有100个线程，但是同时运行的只有两个线程。</p>
+</li>
+<li><p>release，线程业务处理完毕后，一定要调用该方法，将个数还回去，否则影响别的线程的运行，会导致别的线程一直处于阻塞</p>
+</li>
+</ul>
+<p>代码<a href="https://github.com/wangwren/JUC/tree/master/src/main/java/juc/c_021" target="_blank" rel="noopener">c_021</a>部分</p>
+<h2 id="Exchanger"><a href="#Exchanger" class="headerlink" title="Exchanger"></a>Exchanger</h2><p>只能是两个线程之间，exchange方法是阻塞的，一个A线程exchange了，另一个B线程没有exchange，那么A线程就等着，阻塞。</p>
+<p>三个线程之间没有意义。</p>
+<p>代码<a href="https://github.com/wangwren/JUC/tree/master/src/main/java/juc/c_022" target="_blank" rel="noopener">c_022</a>部分</p>
+<h2 id="LockSupport"><a href="#LockSupport" class="headerlink" title="LockSupport"></a>LockSupport</h2><p>LockSupport翻译过来是<strong>锁支持</strong>。</p>
+<p>代码<a href="https://github.com/wangwren/JUC/tree/master/src/main/java/juc/c_023" target="_blank" rel="noopener">c_023</a></p>
+<h2 id="淘宝面试题"><a href="#淘宝面试题" class="headerlink" title="淘宝面试题"></a>淘宝面试题</h2><ul>
+<li><p>实现一个容器，提供两个方法，add和size；写两个线程，线程1添加10个元素至容器中，线程2实现监控元素个数，当容器内个数达到5个的时候，线程2给出提示并结束。</p>
+<ul>
+<li>使用volatile方式，但是这种方式并不能解决。代码：<a href="https://github.com/wangwren/JUC/blob/master/src/main/java/juc/c_024_01_interview/T01_WithoutVolatile.java" target="_blank" rel="noopener">T01_WithoutVolatile</a>、<a href="https://github.com/wangwren/JUC/blob/master/src/main/java/juc/c_024_01_interview/T02_WithVolatile.java" target="_blank" rel="noopener">T02_WithVolatile</a></li>
+<li>使用wait、notify方式解决：<ul>
+<li>wait会释放锁，而notify不会释放锁。</li>
+<li><strong>在调用wait()和notify()之前，必须使用synchronized语义绑定住被wait/notify对象</strong>，否则会报错。</li>
+<li><a href="https://github.com/wangwren/JUC/blob/master/src/main/java/juc/c_024_01_interview/T03_NotifyHoldingLock.java" target="_blank" rel="noopener">T03_NotifyHoldingLock</a>、<a href="https://github.com/wangwren/JUC/blob/master/src/main/java/juc/c_024_01_interview/T04_NotifyFreeLock.java" target="_blank" rel="noopener">T04_NotifyFreeLock</a></li>
+</ul>
+</li>
+<li>使用CountDownLatch解决。代码：<a href="https://github.com/wangwren/JUC/blob/master/src/main/java/juc/c_024_01_interview/T05_CountDownLatch.java" target="_blank" rel="noopener">T05_CountDownLatch</a></li>
+<li>使用LockSupport解决。代码：<a href="https://github.com/wangwren/JUC/blob/master/src/main/java/juc/c_024_01_interview/T06_LockSupport.java" target="_blank" rel="noopener">T06_LockSupport</a></li>
+</ul>
+</li>
+<li><p>写一个固定容量同步容器，拥有put和get方法，以及getCount方法，能够支持2个生产者线程以及10个消费者线程的阻塞调用。</p>
+<ul>
+<li>使用wait和notify/notifyAll实现：<a href="https://github.com/wangwren/JUC/blob/master/src/main/java/juc/c_024_02_interview/MyContainer1.java" target="_blank" rel="noopener">MyContainer1</a></li>
+<li>使用Lock和Condition的方式，可以更精准的指定哪些线程被唤醒：<a href="https://github.com/wangwren/JUC/blob/master/src/main/java/juc/c_024_02_interview/MyContainer2.java" target="_blank" rel="noopener">MyContainer2</a></li>
+<li><strong>这两种写法应该背下来</strong>。</li>
+</ul>
+</li>
+</ul>
+<h2 id="AQS-重要"><a href="#AQS-重要" class="headerlink" title="AQS(重要)"></a>AQS(重要)</h2><p>AQS的核心就是使用CAS的操作，操作双向链表的head和tail，替代了synchronized操作。</p>
+<p>参考这篇文章，包含AQS讲解和ReentrantLock源码的分析(jDK1.8):<a href="https://www.cnblogs.com/takumicx/p/9402021.html" target="_blank" rel="noopener">从源码角度彻底理解ReentrantLock(重入锁)</a></p>
+<p>还可以看这篇<a href="https://blog.csdn.net/u010862794/article/details/72892300" target="_blank" rel="noopener">JAVA并发编程: CAS和AQS</a></p>
+<p>代码<a href="https://github.com/wangwren/JUC/tree/master/src/main/java/juc/c_025_AQS" target="_blank" rel="noopener">c_025_AQS</a></p>
+<h3 id="VarHandle-JDK1-9-："><a href="#VarHandle-JDK1-9-：" class="headerlink" title="VarHandle(JDK1.9)："></a>VarHandle(JDK1.9)：</h3><p>代码<a href="https://github.com/wangwren/JUC/blob/master/src/main/java/juc/c_026_VarHandle/T01_HelloVarHandle.java" target="_blank" rel="noopener">c_026_VarHandle</a></p>
+<ul>
+<li>普通属性也可以进行原子性操作；</li>
+<li>比反射快，直接操纵二进制码。</li>
+</ul>
+<h2 id="ThreadLocal"><a href="#ThreadLocal" class="headerlink" title="ThreadLocal"></a>ThreadLocal</h2><p>代码<a href="https://github.com/wangwren/JUC/tree/master/src/main/java/juc/c_027_ThreadLocal" target="_blank" rel="noopener">c_027_ThreadLocal</a></p>
+<p>用途：spring的声明式事务，保证同一个connection</p>
+<p>参考文章：<a href="https://www.cnblogs.com/dolphin0520/p/3920407.html" target="_blank" rel="noopener">Java并发编程：深入剖析ThreadLocal</a></p>
+<ul>
+<li>实际的通过ThreadLocal创建的副本是存储在每个线程自己的threadLocals中；</li>
+<li>为何threadLocals的类型ThreadLocalMap的键值为ThreadLocal对象，因为每个线程中可以有多个threadLocal变量；</li>
+<li>在进行get之前必须先set，否则会报空异常。如果想在get之前不需要调用set就能正常访问的话，必须重写initalValue()方法。</li>
+</ul>
+<h2 id="强软弱虚"><a href="#强软弱虚" class="headerlink" title="强软弱虚"></a>强软弱虚</h2><p>代码:<a href="https://github.com/wangwren/JUC/tree/master/src/main/java/juc/c_029_RefType" target="_blank" rel="noopener">c_029_RefType</a></p>
+<h3 id="强引用"><a href="#强引用" class="headerlink" title="强引用"></a>强引用</h3><p>我们平常典型编码 <code>Object obj = new Object();</code>中的obj就是强引用。通过关键字new创建的对象所关联的引用就是强引用。当JVM内存空间不足，JVM宁愿抛出OOM运行时错误，使程序异常终止，也不会随意回收具有强引用的“存活”对象来解决内存不足的问题。对于一个普通对象，如果没有其他引用关系，只要超过了引用的作用域或者显示地将相应(强)引用赋值为null，就是可以被垃圾收集了，具体回收时机要看垃圾收集策略。</p>
+<h3 id="软引用-SoftReference"><a href="#软引用-SoftReference" class="headerlink" title="软引用(SoftReference)"></a>软引用(SoftReference)</h3><p>软引用通过SoftReference类实现。软引用的生命周期比强引用短一些。只有当 JVM 认为内存不足时，才会去试图回收软引用指向的对象：即JVM 会确保在抛出 OutOfMemoryError 之前，清理软引用指向的对象。软引用可以和一个引用队列（ReferenceQueue）联合使用，如果软引用所引用的对象被垃圾回收器回收，Java虚拟机就会把这个软引用加入到与之关联的引用队列中。后续，我们可以调用ReferenceQueue的poll()方法来检查是否有它所关心的对象被回收。如果队列为空，将返回一个null,否则该方法返回队列中前面的一个Reference对象。</p>
+<p>应用场景：软引用通常用来实现内存敏感的缓存。如果还有空闲内存，就可以暂时保留缓存，当内存不足时清理掉，这样就保证了使用缓存的同时，不会耗尽内存。</p>
+<h3 id="弱引用-WeakReference"><a href="#弱引用-WeakReference" class="headerlink" title="弱引用(WeakReference)"></a>弱引用(WeakReference)</h3><p>弱引用通过WeakReference类实现。弱引用的生命周期比软引用短。在垃圾回收器线程扫描它所管辖的内存区域的过程中，一旦发现了具有弱引用的对象，不管当前内存空间足够与否，都会回收它的内存。由于垃圾回收器是一个优先级很低的线程，因此不一定会很快回收弱引用的对象。弱引用可以和一个引用队列（ReferenceQueue）联合使用，如果弱引用所引用的对象被垃圾回收，Java虚拟机就会把这个弱引用加入到与之关联的引用队列中。</p>
+<p>对应的ThreadLocal中的ThreadLocalMap的Entry继承的就是弱引用。</p>
+<p><img alt="WeakReference" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/2019-10-11_23-38-09.png" class="lozad"></p>
+<p>加了个图，但是在GitHub上显示不全不知道为啥，可以直接访问链接查看：<a href="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/2019-10-11_23-38-09.png" target="_blank" rel="noopener">弱引用ThreadLocal中的Entry</a></p>
+<p>还有WeakHashMap，可以参考这篇文章或看源码：<a href="https://blog.csdn.net/qiuhao9527/article/details/80775524" target="_blank" rel="noopener">WeakHashMap的详细理解</a></p>
+<h3 id="虚引用-PhantomReference"><a href="#虚引用-PhantomReference" class="headerlink" title="虚引用(PhantomReference)"></a>虚引用(PhantomReference)</h3><p>虚引用也叫幻象引用，通过PhantomReference类来实现。无法通过虚引用访问对象的任何属性或函数。幻象引用仅仅是提供了一种确保对象被 finalize 以后，做某些事情的机制。如果一个对象仅持有虚引用，那么它就和没有任何引用一样，在任何时候都可能被垃圾回收器回收。虚引用必须和引用队列 （ReferenceQueue）联合使用。当垃圾回收器准备回收一个对象时，如果发现它还有虚引用，就会在回收对象的内存之前，把这个虚引用加入到与之关联的引用队列中。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ReferenceQueue queue = <span class="keyword">new</span> ReferenceQueue ();</span><br><span class="line">PhantomReference pr = <span class="keyword">new</span> PhantomReference (object, queue);</span><br></pre></td></tr></table></figure></p>
+<p>程序可以通过判断引用队列中是否已经加入了虚引用，来了解被引用的对象是否将要被垃圾回收。如果程序发现某个虚引用已经被加入到引用队列，那么就可以在所引用的对象的内存被回收之前采取一些程序行动。</p>
+<p>应用场景：可用来跟踪对象被垃圾回收器回收的活动，当一个虚引用关联的对象被垃圾收集器回收之前会收到一条系统通知。</p>
+<h2 id="容器-这里介绍容器为线程池做准备"><a href="#容器-这里介绍容器为线程池做准备" class="headerlink" title="容器(这里介绍容器为线程池做准备)"></a>容器(这里介绍容器为线程池做准备)</h2><p><img alt="container" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/31571235049_.pic.jpg" class="lozad"></p>
+<p>Java中容器分两大类：Collection和Map，其中Coll8ection中又分List、Set、Queue。  </p>
+<p>Queue是后加的，在很大程度上是为了高并发准备的(线程池中经常用)，其中阻塞队列(BlockingQueue)很重要。(这也是List和Queue的区别)。</p>
+<p>Vector和HashTable在JDK1.0就有了，在当初设计的时候有点问题，在其内部的所有方法上都加了锁，自带锁，现在基本不用。</p>
+<h3 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h3><p>代码：<a href="https://github.com/wangwren/JUC/tree/master/src/main/java/juc/c_030_01_FromHashTable2CHM" target="_blank" rel="noopener">c_030_01_FromHashTable2CHM</a></p>
+<p>Map的进化历程：HashTable -&gt; HashMap -&gt; SynchronizedHashMap -&gt; ConcurrentHashMap</p>
+<p>跳表参考:<a href="http://blog.csdn.net/sunxianghuang/article/details/52221913" target="_blank" rel="noopener">跳表（SkipList）及ConcurrentSkipListMap源码解析</a></p>
+<p><a href="https://github.com/wangwren/JUC/blob/master/src/main/java/juc/c_031/T01_ConcurrentHashMap.java" target="_blank" rel="noopener">T01_ConcurrentHashMap</a></p>
+<h3 id="Collection"><a href="#Collection" class="headerlink" title="Collection"></a>Collection</h3><p>代码：<a href="https://github.com/wangwren/JUC/tree/master/src/main/java/juc/c_030_02_FromVector2Queue" target="_blank" rel="noopener">c_030_02_FromVector2Queue</a></p>
+<p>进化历程：Vector -&gt; List -&gt; SynchronizedList -&gt; Queue</p>
+<ul>
+<li>同步容器类:<ul>
+<li>Vector、HashTable ：早期使用synchronized实现。</li>
+<li>ArrayList、HashSet ：未考虑多线程安全(未实现同步)。</li>
+<li>Collections.synchronizedXXX：其内部也是使用的synchronized。</li>
+</ul>
+</li>
+</ul>
+<p>使用早期的<strong>同步容器</strong>以及<code>Collections.snchronizedXXX</code>方法的不足之处，参考：<br><a href="http://blog.csdn.net/itm_hadf/article/details/7506529" target="_blank" rel="noopener">java集合框架【3】 java1.5新特性 ConcurrentHashMap、Collections.synchronizedMap、Hashtable讨论</a></p>
+<p>使用新的并发容器：<a href="http://xuganggogo.iteye.com/blog/321630" target="_blank" rel="noopener">jdk1.5新特性 ConcurrentHashMap</a></p>
+<h4 id="CopyOnWriteList"><a href="#CopyOnWriteList" class="headerlink" title="CopyOnWriteList"></a>CopyOnWriteList</h4><p>代码：<a href="https://github.com/wangwren/JUC/blob/master/src/main/java/juc/c_031/T02_CopyOnWriteList.java" target="_blank" rel="noopener">T02_CopyOnWriteList</a></p>
+<ul>
+<li>写时复制容器 copy on write</li>
+<li>多线程环境下，写时效率低，读时效率高；适合读多写少的环境。</li>
+<li>CopyOnWriteArrayList源码中，写时会加锁，并建了一个新的数组，并比之前的数组+1大小，将新元素放入新的位置</li>
+</ul>
+<p><img alt="copyonwritelistadd" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/copyonwritelistadd.png" class="lozad"></p>
+<ul>
+<li>读的时候不加锁，因为读的时候，新的和老的元素都一样，不需要加锁。</li>
+</ul>
+<p><img alt="get" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/copyonwirteget.png" class="lozad"></p>
+<h3 id="Queue"><a href="#Queue" class="headerlink" title="Queue"></a>Queue</h3><ul>
+<li>offer，对应add，加后会有一个返回值，成功返回true，不成功返回false</li>
+<li>add加不进去则会抛出异常。在Queue中经常使用offer。</li>
+<li>peek，取元素，但是并不会删除掉该元素。</li>
+<li>poll，取元素，并且删除掉该元素。</li>
+</ul>
+<p>ConcurrentQueue都是线程安全的操作。<a href="https://github.com/wangwren/JUC/blob/master/src/main/java/juc/c_031/T03_ConcurrentQueue.java" target="_blank" rel="noopener">T03_ConcurrentQueue</a></p>
+<h4 id="BlockingQueue"><a href="#BlockingQueue" class="headerlink" title="BlockingQueue"></a>BlockingQueue</h4><p>LinkedBlockingQueue无界的，最大是Integer.MAX_VALUE；ArrayBlockingQueue有界的。</p>
+<p><a href="https://github.com/wangwren/JUC/blob/master/src/main/java/juc/c_031/T04_LinkedBlockingQueue.java" target="_blank" rel="noopener">T04_LinkedBlockingQueue</a></p>
+<p><a href="https://github.com/wangwren/JUC/blob/master/src/main/java/juc/c_031/T05_ArrayBlockingQueue.java" target="_blank" rel="noopener">T05_ArrayBlockingQueue</a></p>
+<p>BlockingQueue在Queue的基础上多了<code>put</code>和<code>take</code>方法(这两个方法才体现了Blocking，offer是不会阻塞的)。<br>put元素时如果慢了，则线程会阻塞住；take取元素时，没有元素了会阻塞住。<br>BlockingQueue是天生的友好的<strong>生产者消费者模型</strong></p>
+<h5 id="DelayQueue"><a href="#DelayQueue" class="headerlink" title="DelayQueue"></a>DelayQueue</h5><ul>
+<li>是BlockingQueue的一种，也是一种阻塞的队列。区别是DelayQueue可以按等待时间排序。通过compareTo来做比较的，可以自己指定比较规则。</li>
+<li>一般用来按时间进行任务调度。</li>
+<li>实际上是通过PriorityQueue来实现的。</li>
+</ul>
+<p><a href="https://github.com/wangwren/JUC/blob/master/src/main/java/juc/c_031/T06_DelayQueue.java" target="_blank" rel="noopener">T06_DelayQueue</a></p>
+<h5 id="SynchronusQueue-同步Queue"><a href="#SynchronusQueue-同步Queue" class="headerlink" title="SynchronusQueue(同步Queue)"></a>SynchronusQueue(同步Queue)</h5><ul>
+<li>两个线程间的同步交换。</li>
+<li><strong>容量为0</strong>，不是用来存放元素的，而是用来给别的线程下达任务的。</li>
+<li>只能用来阻塞式的put的调用，等着别人take；如果使用add方法，则直接报错，因为容量为0，不可以往里面放元素。</li>
+</ul>
+<p><a href="https://github.com/wangwren/JUC/blob/master/src/main/java/juc/c_031/T08_SynchronousQueue.java" target="_blank" rel="noopener">T08_SynchronousQueue</a></p>
+<h5 id="TransferQueue"><a href="#TransferQueue" class="headerlink" title="TransferQueue"></a>TransferQueue</h5><ul>
+<li>等待多个线程的取走、消费；而SynchronusQueue是一个线程对一个线程。</li>
+<li>多了<code>transfer</code>方法，该方法装元素，装完等着，有人来取才会继续。</li>
+<li>而使用 <code>put</code> 方法装完就不管了，装完就继续执行了，不等待。</li>
+</ul>
+<p><a href="https://github.com/wangwren/JUC/blob/master/src/main/java/juc/c_031/T09_TransferQueue.java" target="_blank" rel="noopener">T09_TransferQueue</a></p>
+<h4 id="PriorityQueue"><a href="#PriorityQueue" class="headerlink" title="PriorityQueue"></a>PriorityQueue</h4><p>PriorityQueue是有排序的，内部是一课堆排序的树结构。</p>
+<p><a href="https://github.com/wangwren/JUC/blob/master/src/main/java/juc/c_031/T07_PriorityQueue.java" target="_blank" rel="noopener">T07_PriorityQueue</a></p>
+<h3 id="面试题"><a href="#面试题" class="headerlink" title="面试题"></a>面试题</h3><ul>
+<li><strong>Queue和List的区别</strong><ul>
+<li>Queue多了对线程友好的API(offer、peek、poll)；</li>
+<li>BlockingQueue又多了take，put，这两个是阻塞的API，是生产者消费者的模型。</li>
+</ul>
+</li>
+</ul>
+<h2 id="面试题-交替打印"><a href="#面试题-交替打印" class="headerlink" title="面试题(交替打印)"></a>面试题(交替打印)</h2><ul>
+<li>题：使用两个线程，线程1打印 A B C …;线程2打印 1 2 3…最后打印出的结果要是A1B2C3这种交替打印。</li>
+<li><p><strong>在调用wait()和notify()之前，必须使用synchronized语义绑定住被wait/notify对象</strong>，否则会报错。</p>
+</li>
+<li><p>提供了多种实现方式，难易程度：LockSupport cas BlockingQueue wait-notify lock-condition (仅供参考)。</p>
+</li>
+</ul>
+<p>代码：<a href="https://github.com/wangwren/JUC/tree/master/src/main/java/juc/c_028_interview/A1B2C3" target="_blank" rel="noopener">c_028_interview</a></p>
+<h2 id="线程池"><a href="#线程池" class="headerlink" title="线程池"></a>线程池</h2><ul>
+<li><a href="https://github.com/wangwren/JUC/blob/master/src/main/java/juc/c_032_ThreadPool/T01_MyExecutor.java" target="_blank" rel="noopener">T01_MyExecutor</a></li>
+<li><a href="https://github.com/wangwren/JUC/blob/master/src/main/java/juc/c_032_ThreadPool/T02_ExecutorService.java" target="_blank" rel="noopener">T02_ExecutorService</a></li>
+<li>Callable就类型与Runnable，但是Callable有返回值，一般用在线程池。<a href="https://github.com/wangwren/JUC/blob/master/src/main/java/juc/c_032_ThreadPool/T03_Callable.java" target="_blank" rel="noopener">T03_Callable</a></li>
+<li>Future存储执行的将来才会产生的结果。<a href="https://github.com/wangwren/JUC/blob/master/src/main/java/juc/c_032_ThreadPool/T03_Callable.java" target="_blank" rel="noopener">T03_Callable</a></li>
+<li>FutureTask，相当于Future + Runnable，即可以执行，又可以存结果。<a href="https://github.com/wangwren/JUC/blob/master/src/main/java/juc/c_032_ThreadPool/T04_FutureTask.java" target="_blank" rel="noopener">T04_FutureTask</a></li>
+<li>CompletableFuture，可以用来管理多个Future的结果(这只是其中一个)，其底层是ForkJoinPool。<strong>这个类很强大，可以多搜一搜</strong>。<ul>
+<li><a href="https://github.com/wangwren/JUC/blob/master/src/main/java/juc/c_032_ThreadPool/T05_CompletableFuture.java" target="_blank" rel="noopener">T05_CompletableFuture</a></li>
+</ul>
+</li>
+</ul>
+<h3 id="两种线程池"><a href="#两种线程池" class="headerlink" title="两种线程池"></a>两种线程池</h3><ul>
+<li><p><strong>ThreadPoolExecutor</strong></p>
+<ul>
+<li>线程池忙(包括指定的最大线程数)，而且任务队列满，这时候会进行<strong>拒绝策略</strong>(拒绝策略可以自定义，但是JDK提供了四种)。</li>
+<li><p>四种拒绝策略：(实战上都不用，一般都自定义)</p>
+<ul>
+<li>AbortPolicy：抛异常。</li>
+<li>DiscardPolicy：扔掉，不抛异常。</li>
+<li>DiscardOldestPolicy：扔掉排队时间最久的。</li>
+<li>CallerRunsPolicy：调用者处理任务。谁提交任务，谁来执行。</li>
+</ul>
+</li>
+<li><p>有两种执行线程池的方法execute和submit，这两个方法都可以启动线程，但是submit有返回值，可以返回一个future对象</p>
+</li>
+</ul>
+</li>
+<li><p><strong>ForkJoinPool</strong></p>
+<ul>
+<li>分解汇总的任务</li>
+<li>用很少的线程可以执行很多的任务(子任务)，ThreadPoolExecutor做不到先执行子任务。</li>
+<li>CPU密集型</li>
+</ul>
+</li>
+</ul>
+<p><strong>简单使用及参数说明，这个要背下来</strong>：<a href="https://github.com/wangwren/JUC/blob/master/src/main/java/juc/c_032_ThreadPool/T06_HelloThreadPool.java" target="_blank" rel="noopener">T06_HelloThreadPool</a></p>
+<h4 id="调整线程池的大小"><a href="#调整线程池的大小" class="headerlink" title="调整线程池的大小"></a>调整线程池的大小</h4><p><img alt="threadsize" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/threadsize.png" class="lozad"></p>
+<h3 id="Executors"><a href="#Executors" class="headerlink" title="Executors"></a>Executors</h3><ul>
+<li>Executors，可以看成是线程池的工厂，可以用来产生各种各样的线程池。</li>
+<li>其底层都是靠ThreadPoolExecutor实现的。</li>
+</ul>
+<blockquote>
+<p>Executors返回的线程池对象的弊端如下：</p>
+<ol>
+<li>FixedThreadPool和SingleThreadExecutor：允许的请求队列长度为<code>Integer.MAX_VALUE</code>，可能会堆积大量的请求，从而导致OOM。</li>
+<li>CachedThreadPool和ScheduledThreadPool：允许的创建线程数量为<code>Integer.MAX_VALUE</code>，可能会创建大量的线程，从而导致OOM。</li>
+</ol>
+</blockquote>
+<h4 id="SingleThreadExecutor"><a href="#SingleThreadExecutor" class="headerlink" title="SingleThreadExecutor"></a>SingleThreadExecutor</h4><p><code>Executors.newSingleThreadExecutor</code>只有一个线程的线程池，可以保证任务扔进去的顺序。</p>
+<p>可以去看源码实现，都是使用的ThreadPoolExecutor类来指定的。</p>
+<ul>
+<li>为什么要有单线程的线程池？<ul>
+<li>线程池是有任务队列的。任务数量最大是Integer.MAX_VALUE</li>
+<li>有线程的完整的生命周期管理。</li>
+</ul>
+</li>
+</ul>
+<p><img alt="singleThreadExecutor" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/singleThreadExecutor.png" class="lozad"></p>
+<p>代码：<a href="https://github.com/wangwren/JUC/blob/master/src/main/java/juc/c_032_ThreadPool/T07_SingleThreadExecutor.java" target="_blank" rel="noopener">T07_SingleThreadExecutor</a></p>
+<h4 id="CachedThreadPool"><a href="#CachedThreadPool" class="headerlink" title="CachedThreadPool"></a>CachedThreadPool</h4><ul>
+<li>没有核心线程</li>
+<li>最大线程数为Integer.MAX_VALUE</li>
+<li>线程空闲时间的为60秒</li>
+<li>任务队列为SynchronousQueue，这个Queue的容量为0。</li>
+</ul>
+<p>这个线程池，来任务就起一个新的线程，不会放入队列中，因为任务队列为SynchronousQueue的容量为0.</p>
+<p><img alt="cachedthreadpool" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/cachedthreadpool.png" class="lozad"></p>
+<p>代码：<a href="https://github.com/wangwren/JUC/blob/master/src/main/java/juc/c_032_ThreadPool/T08_CachedThreadPool.java" target="_blank" rel="noopener">T08_CachedThreadPool</a></p>
+<h4 id="FixedThreadPool"><a href="#FixedThreadPool" class="headerlink" title="FixedThreadPool"></a>FixedThreadPool</h4><ul>
+<li>固定的线程数。可以自己指定线程数。</li>
+<li><strong>确确实实可以让任务并行处理的，可以提高效率</strong>。</li>
+</ul>
+<p><img alt="fixthreadpool" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/fixthreadpool.png" class="lozad"></p>
+<p>代码：<a href="https://github.com/wangwren/JUC/blob/master/src/main/java/juc/c_032_ThreadPool/T09_FixedThreadPool.java" target="_blank" rel="noopener">T09_FixedThreadPool</a></p>
+<h4 id="ScheduledThreadPool"><a href="#ScheduledThreadPool" class="headerlink" title="ScheduledThreadPool"></a>ScheduledThreadPool</h4><ul>
+<li>也可以指定核心线程数。</li>
+<li>专门用来执行<strong>定时任务的线程池</strong></li>
+<li>它的任务队列是DelayedWorkQueue，可以指定多长时间之后运行。</li>
+</ul>
+<p><img alt="scheduledthreadpool" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/scheduledthreadpool.png" class="lozad"></p>
+<p>代码：<a href="https://github.com/wangwren/JUC/blob/master/src/main/java/juc/c_032_ThreadPool/T10_ScheduleThreadPool.java" target="_blank" rel="noopener">T10_ScheduleThreadPool</a></p>
+<h5 id="Cached-vs-Fixed"><a href="#Cached-vs-Fixed" class="headerlink" title="Cached vs Fixed"></a>Cached vs Fixed</h5><p>阿里都不用，自己估算，进行精确定义。</p>
+<h3 id="并发-concurrent-vs-并行-parallel"><a href="#并发-concurrent-vs-并行-parallel" class="headerlink" title="并发(concurrent) vs 并行(parallel)"></a>并发(concurrent) vs 并行(parallel)</h3><ul>
+<li>并发，并发是指任务<strong>提交</strong>。</li>
+<li>并行，并行是指任务<strong>执行</strong>。</li>
+</ul>
+<p>并行是并发的子集。</p>
+<h2 id="TheadPoolExecutor源码解析"><a href="#TheadPoolExecutor源码解析" class="headerlink" title="TheadPoolExecutor源码解析"></a>TheadPoolExecutor源码解析</h2><p><a href="http://wangwren.com/2019/10/ThreadPoolExecutor%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/">ThreadPoolExecutor源码解析</a></p>
+<h3 id="ForkJoinPool"><a href="#ForkJoinPool" class="headerlink" title="ForkJoinPool"></a>ForkJoinPool</h3><p><img alt="51571581502_" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/51571581502_.pic.jpg" class="lozad"></p>
+<ul>
+<li><strong>Fork/Join框架</strong>：就是在必要的情况下，将一个大任务，进行拆分(fork)成若干个小任务(拆到不可再拆时)，再将一个个的小任务运算的结果进行join汇总。</li>
+</ul>
+<h4 id="Fork-Join框架与传统线程池的区别"><a href="#Fork-Join框架与传统线程池的区别" class="headerlink" title="Fork/Join框架与传统线程池的区别"></a>Fork/Join框架与传统线程池的区别</h4><ul>
+<li>采用<strong>工作窃取</strong>模式(work-stealing):<ul>
+<li>当执行新的任务时，它可以将其拆分成更小的任务执行，并将小任务加到线程队列中，然后再从一个随机线程的队列中偷一个并把它放在自己的队列中。</li>
+</ul>
+</li>
+<li>相对于一般的线程池实现，fork/join框架的优势体现在对其中包含的任务的处理方式上。在一般线程池中，如果一个线程正在执行的任务由于某些原因无法继续运行，那么该线程会处于等待状态。</li>
+<li>而在fork/join框架实现中，如果某个子问题由于等待另外一个子问题的完成而无法继续运行，<strong>那么处理该子问题的线程会主动寻找其他尚未运行的子问题来执行</strong>，这种方式减少了线程的等待时间，提高了性能。</li>
+</ul>
+<p>代码：<a href="https://github.com/wangwren/JUC/blob/master/src/main/java/juc/c_032_ThreadPool/T12_ForkJoinPool.java" target="_blank" rel="noopener">T12_ForkJoinPool</a></p>
+<h3 id="WorkStealing"><a href="#WorkStealing" class="headerlink" title="WorkStealing"></a>WorkStealing</h3><ul>
+<li>每一个线程都有一个自己的队列，当自己队列中的任务执行完毕后，会去别的线程的队列上拿一个任务来执行。</li>
+<li>本质上是一个ForkJoinPool。</li>
+</ul>
+<p><img alt="workstealing" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/workstealing.png" class="lozad"></p>
+<p>代码：<a href="https://github.com/wangwren/JUC/blob/master/src/main/java/juc/c_032_ThreadPool/T11_WorkStealingPool.java" target="_blank" rel="noopener">T11_WorkStealingPool</a></p>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">wangwren</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://wangwren.com/2019/10/Java高并发与多线程/">http://wangwren.com/2019/10/Java高并发与多线程/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://wangwren.com">DebugDog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/java/">java    </a></div><div class="post_share"><div class="social-share" data-image="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/101571754432_.pic.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js@1.0.16/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js@1.0.16/dist/js/social-share.min.js"></script></div></div><div class="post-reward"><a class="reward-buttom"><i class="fa fa-qrcode"></i> 打赏<div class="reward-main"><ul class="reward-all"><li class="reward-item"><img class="lozad post-qr-code__img" src="/img/wechat.jpg"><div class="post-qr-code__desc">微信</div></li></ul></div></a></div><nav class="pagination_post" id="pagination"><div class="next-post pull-full"><a href="/2019/10/ThreadPoolExecutor源码解析/"><img class="next_cover lozad" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/61571670102_.pic.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="label">下一篇</div><div class="next_info"><span>ThreadPoolExecutor源码解析</span></div></a></div></nav><div class="relatedPosts"><div class="relatedPosts_headline"><i class="fa fa-fw fa-thumbs-up" aria-hidden="true"></i><span> 相关推荐</span></div><div class="relatedPosts_list"><div class="relatedPosts_item"><a href="/2019/02/Spring事务的传播行为/" title="Spring事务的传播行为"><img class="relatedPosts_cover lozad" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/page-default.jpg"><div class="relatedPosts_title">Spring事务的传播行为</div></a></div><div class="relatedPosts_item"><a href="/2019/04/Transactional事务注解问题/" title="Transactional事务注解问题"><img class="relatedPosts_cover lozad" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/page-default.jpg"><div class="relatedPosts_title">Transactional事务注解问题</div></a></div><div class="relatedPosts_item"><a href="/2019/02/foreach遍历集合时进行remove操作的问题/" title="foreach遍历集合时进行remove操作的问题"><img class="relatedPosts_cover lozad" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/page-default.jpg"><div class="relatedPosts_title">foreach遍历集合时进行remove操作的问题</div></a></div><div class="relatedPosts_item"><a href="/2019/08/ArrayList还是LinkedList？使用不当性能差千倍/" title="ArrayList还是LinkedList？使用不当性能差千倍"><img class="relatedPosts_cover lozad" data-src="https://static001.geekbang.org/resource/image/e0/4d/e0e7e861db0466a5c60d14fe0b5bfe4d.jpg"><div class="relatedPosts_title">ArrayList还是LinkedList？使用不当性能差千倍</div></a></div><div class="relatedPosts_item"><a href="/2019/07/Java字符串性能优化/" title="Java字符串性能优化"><img class="relatedPosts_cover lozad" data-src="https://static001.geekbang.org/resource/image/77/2c/7762cbbafd807bd785d022c17e9f0f2c.jpg"><div class="relatedPosts_title">Java字符串性能优化</div></a></div><div class="relatedPosts_item"><a href="/2019/10/ThreadPoolExecutor源码解析/" title="ThreadPoolExecutor源码解析"><img class="relatedPosts_cover lozad" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/61571670102_.pic.jpg"><div class="relatedPosts_title">ThreadPoolExecutor源码解析</div></a></div></div><div class="clear_both"></div></div><hr><div id="post-comment"><div class="comment_headling"><i class="fa fa-comments fa-fw" aria-hidden="true"></i><span> 评论</span></div><div class="vcomment" id="vcomment"></div><script src="https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js"></script><script>var notify = false == true ? true : false;
+var verify = false == true ? true : false;
+var GUEST_INFO = ['nick','mail','link'];
+var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+  return GUEST_INFO.indexOf(item) > -1
+});
+guest_info = guest_info.length == 0 ? GUEST_INFO :guest_info;
+
+window.valine = new Valine({
+  el:'#vcomment',
+  notify:notify,
+  verify:verify,
+  appId:'I63inpV0nqSIH11COkHHjX4b-MdYXbMMI',
+  appKey:'Je2JmFDzw7JlTQzTytALACeh',
+  placeholder:'说点什么吧 :)',
+  avatar:'monsterid',
+  guest_info:guest_info,
+  pageSize:'10',
+  lang:'en',
+  recordIP: true
+});</script></div></div></div><footer><div id="footer"><div class="copyright">&copy;2018 - 2019 By wangwren</div><div class="framework-info"><span>驱动 </span><a href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>主题 </span><a href="https://github.com/jerryc127/hexo-theme-butterfly"><span>Butterfly</span></a></div><div class="footer_custom_text">Hi, welcome to my <a href="https://wangwren.com/">blog</a>!</div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><section class="rightside" id="rightside"><a id="to_comment" href="#post-comment"><i class="scroll_to_comment fa fa-comments"></i></a><i class="fa fa-book" id="readmode" title="阅读模式"> </i><i class="fa fa-plus" id="font_plus" title="放大字体"></i><i class="fa fa-minus" id="font_minus" title="缩小字体"></i><a class="translate_chn_to_cht" id="translateLink" href="javascript:translatePage();" title="简繁转换">简</a><i class="nightshift fa fa-moon-o" id="nightshift" title="夜间模式"></i></section><div class=" " id="post_bottom"><div id="post_bottom_items"><a id="mobile_to_comment" href="#post-comment"><i class="mobile_scroll_to_comment fa fa-comments"></i></a><i class="fa fa-list" id="mobile_toc"></i><div id="toc_mobile"><div class="toc_mobile_headline">目录</div><ol class="toc_mobile_items"><li class="toc_mobile_items-item toc_mobile_items-level-1"><a class="toc_mobile_items-link" href="#高并发与多线程"><span class="toc_mobile_items-number">1.</span> <span class="toc_mobile_items-text">高并发与多线程</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#线程"><span class="toc_mobile_items-number">1.1.</span> <span class="toc_mobile_items-text">线程</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#synchronized关键字-悲观锁"><span class="toc_mobile_items-number">1.2.</span> <span class="toc_mobile_items-text">synchronized关键字(悲观锁)</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#那什么时候用自旋，什么时候用重量级锁？"><span class="toc_mobile_items-number">1.2.1.</span> <span class="toc_mobile_items-text">那什么时候用自旋，什么时候用重量级锁？</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#volatile关键字"><span class="toc_mobile_items-number">1.3.</span> <span class="toc_mobile_items-text">volatile关键字</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#CAS-无锁优化-乐观锁、自旋锁"><span class="toc_mobile_items-number">1.4.</span> <span class="toc_mobile_items-text">CAS (无锁优化 乐观锁、自旋锁)</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#ReentrantLock-重入锁"><span class="toc_mobile_items-number">1.5.</span> <span class="toc_mobile_items-text">ReentrantLock 重入锁</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#synchronized和ReentrantLock有什么不同？"><span class="toc_mobile_items-number">1.5.1.</span> <span class="toc_mobile_items-text">synchronized和ReentrantLock有什么不同？</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#CountDownLatch-门闩"><span class="toc_mobile_items-number">1.6.</span> <span class="toc_mobile_items-text">CountDownLatch 门闩</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#CyclicBarrier-栅栏"><span class="toc_mobile_items-number">1.7.</span> <span class="toc_mobile_items-text">CyclicBarrier(栅栏)</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#Phaser-阶段"><span class="toc_mobile_items-number">1.8.</span> <span class="toc_mobile_items-text">Phaser(阶段)</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#ReadWriteLock-读写锁"><span class="toc_mobile_items-number">1.9.</span> <span class="toc_mobile_items-text">ReadWriteLock 读写锁</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#Semaphore信号量-灯"><span class="toc_mobile_items-number">1.10.</span> <span class="toc_mobile_items-text">Semaphore信号量(灯)</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#Exchanger"><span class="toc_mobile_items-number">1.11.</span> <span class="toc_mobile_items-text">Exchanger</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#LockSupport"><span class="toc_mobile_items-number">1.12.</span> <span class="toc_mobile_items-text">LockSupport</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#淘宝面试题"><span class="toc_mobile_items-number">1.13.</span> <span class="toc_mobile_items-text">淘宝面试题</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#AQS-重要"><span class="toc_mobile_items-number">1.14.</span> <span class="toc_mobile_items-text">AQS(重要)</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#VarHandle-JDK1-9-："><span class="toc_mobile_items-number">1.14.1.</span> <span class="toc_mobile_items-text">VarHandle(JDK1.9)：</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#ThreadLocal"><span class="toc_mobile_items-number">1.15.</span> <span class="toc_mobile_items-text">ThreadLocal</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#强软弱虚"><span class="toc_mobile_items-number">1.16.</span> <span class="toc_mobile_items-text">强软弱虚</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#强引用"><span class="toc_mobile_items-number">1.16.1.</span> <span class="toc_mobile_items-text">强引用</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#软引用-SoftReference"><span class="toc_mobile_items-number">1.16.2.</span> <span class="toc_mobile_items-text">软引用(SoftReference)</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#弱引用-WeakReference"><span class="toc_mobile_items-number">1.16.3.</span> <span class="toc_mobile_items-text">弱引用(WeakReference)</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#虚引用-PhantomReference"><span class="toc_mobile_items-number">1.16.4.</span> <span class="toc_mobile_items-text">虚引用(PhantomReference)</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#容器-这里介绍容器为线程池做准备"><span class="toc_mobile_items-number">1.17.</span> <span class="toc_mobile_items-text">容器(这里介绍容器为线程池做准备)</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#Map"><span class="toc_mobile_items-number">1.17.1.</span> <span class="toc_mobile_items-text">Map</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#Collection"><span class="toc_mobile_items-number">1.17.2.</span> <span class="toc_mobile_items-text">Collection</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-4"><a class="toc_mobile_items-link" href="#CopyOnWriteList"><span class="toc_mobile_items-number">1.17.2.1.</span> <span class="toc_mobile_items-text">CopyOnWriteList</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#Queue"><span class="toc_mobile_items-number">1.17.3.</span> <span class="toc_mobile_items-text">Queue</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-4"><a class="toc_mobile_items-link" href="#BlockingQueue"><span class="toc_mobile_items-number">1.17.3.1.</span> <span class="toc_mobile_items-text">BlockingQueue</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-5"><a class="toc_mobile_items-link" href="#DelayQueue"><span class="toc_mobile_items-number">1.17.3.1.1.</span> <span class="toc_mobile_items-text">DelayQueue</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-5"><a class="toc_mobile_items-link" href="#SynchronusQueue-同步Queue"><span class="toc_mobile_items-number">1.17.3.1.2.</span> <span class="toc_mobile_items-text">SynchronusQueue(同步Queue)</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-5"><a class="toc_mobile_items-link" href="#TransferQueue"><span class="toc_mobile_items-number">1.17.3.1.3.</span> <span class="toc_mobile_items-text">TransferQueue</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-4"><a class="toc_mobile_items-link" href="#PriorityQueue"><span class="toc_mobile_items-number">1.17.3.2.</span> <span class="toc_mobile_items-text">PriorityQueue</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#面试题"><span class="toc_mobile_items-number">1.17.4.</span> <span class="toc_mobile_items-text">面试题</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#面试题-交替打印"><span class="toc_mobile_items-number">1.18.</span> <span class="toc_mobile_items-text">面试题(交替打印)</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#线程池"><span class="toc_mobile_items-number">1.19.</span> <span class="toc_mobile_items-text">线程池</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#两种线程池"><span class="toc_mobile_items-number">1.19.1.</span> <span class="toc_mobile_items-text">两种线程池</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-4"><a class="toc_mobile_items-link" href="#调整线程池的大小"><span class="toc_mobile_items-number">1.19.1.1.</span> <span class="toc_mobile_items-text">调整线程池的大小</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#Executors"><span class="toc_mobile_items-number">1.19.2.</span> <span class="toc_mobile_items-text">Executors</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-4"><a class="toc_mobile_items-link" href="#SingleThreadExecutor"><span class="toc_mobile_items-number">1.19.2.1.</span> <span class="toc_mobile_items-text">SingleThreadExecutor</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-4"><a class="toc_mobile_items-link" href="#CachedThreadPool"><span class="toc_mobile_items-number">1.19.2.2.</span> <span class="toc_mobile_items-text">CachedThreadPool</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-4"><a class="toc_mobile_items-link" href="#FixedThreadPool"><span class="toc_mobile_items-number">1.19.2.3.</span> <span class="toc_mobile_items-text">FixedThreadPool</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-4"><a class="toc_mobile_items-link" href="#ScheduledThreadPool"><span class="toc_mobile_items-number">1.19.2.4.</span> <span class="toc_mobile_items-text">ScheduledThreadPool</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-5"><a class="toc_mobile_items-link" href="#Cached-vs-Fixed"><span class="toc_mobile_items-number">1.19.2.4.1.</span> <span class="toc_mobile_items-text">Cached vs Fixed</span></a></li></ol></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#并发-concurrent-vs-并行-parallel"><span class="toc_mobile_items-number">1.19.3.</span> <span class="toc_mobile_items-text">并发(concurrent) vs 并行(parallel)</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#TheadPoolExecutor源码解析"><span class="toc_mobile_items-number">1.20.</span> <span class="toc_mobile_items-text">TheadPoolExecutor源码解析</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#ForkJoinPool"><span class="toc_mobile_items-number">1.20.1.</span> <span class="toc_mobile_items-text">ForkJoinPool</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-4"><a class="toc_mobile_items-link" href="#Fork-Join框架与传统线程池的区别"><span class="toc_mobile_items-number">1.20.1.1.</span> <span class="toc_mobile_items-text">Fork/Join框架与传统线程池的区别</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#WorkStealing"><span class="toc_mobile_items-number">1.20.2.</span> <span class="toc_mobile_items-text">WorkStealing</span></a></li></ol></li></ol></li></ol></div></div></div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="/js/third-party/fireworks.js"></script><script src="/js/nightshift.js"></script><script id="ribbon" src="https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/js/piao.js"></script><script src="/js/activate-power-mode.js"></script><script>POWERMODE.colorful = true; // make power mode colorful
+POWERMODE.shake = true; // turn off shake
+document.body.addEventListener('input', POWERMODE);
+</script><script src="/js/tw_cn.js"></script><script>translateInitilization()
+
+</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@1.2.2/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/lozad/dist/lozad.min.js"></script><script>const observer = lozad(); // lazy loads elements with default selector as '.lozad'
+observer.observe();</script><script src="/live2dw/lib/L2Dwidget.min.js?0c58a1486de42ac6cc1c59c7d98ae887"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/haru02.model.json"},"display":{"position":"right","width":100,"height":200},"mobile":{"show":true}});</script></body></html>

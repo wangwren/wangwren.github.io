@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://wangwren.com/2019/10/Java%E9%AB%98%E5%B9%B6%E5%8F%91%E4%B8%8E%E5%A4%9A%E7%BA%BF%E7%A8%8B/</loc>
+    
+    <lastmod>2019-10-22T14:28:37.066Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://wangwren.com/2019/10/ThreadPoolExecutor%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</loc>
     
     <lastmod>2019-10-21T15:04:07.445Z</lastmod>
@@ -149,14 +156,14 @@
   </url>
   
   <url>
-    <loc>http://wangwren.com/live2d/README.html</loc>
+    <loc>http://wangwren.com/live2d/demo.html</loc>
     
     <lastmod>2018-12-28T13:56:00.000Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://wangwren.com/live2d/demo.html</loc>
+    <loc>http://wangwren.com/live2d/README.html</loc>
     
     <lastmod>2018-12-28T13:56:00.000Z</lastmod>
     
