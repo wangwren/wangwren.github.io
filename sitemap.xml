@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://wangwren.com/2019/10/JMH-Java%E5%9F%BA%E5%87%86%E6%B5%8B%E8%AF%95%E5%B7%A5%E5%85%B7%E5%A5%97%E4%BB%B6/</loc>
+    
+    <lastmod>2019-10-24T14:41:14.685Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://wangwren.com/2019/10/Java%E9%AB%98%E5%B9%B6%E5%8F%91%E4%B8%8E%E5%A4%9A%E7%BA%BF%E7%A8%8B/</loc>
     
     <lastmod>2019-10-22T14:28:37.066Z</lastmod>
@@ -156,14 +163,14 @@
   </url>
   
   <url>
-    <loc>http://wangwren.com/live2d/demo.html</loc>
+    <loc>http://wangwren.com/live2d/README.html</loc>
     
     <lastmod>2018-12-28T13:56:00.000Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://wangwren.com/live2d/README.html</loc>
+    <loc>http://wangwren.com/live2d/demo.html</loc>
     
     <lastmod>2018-12-28T13:56:00.000Z</lastmod>
     
