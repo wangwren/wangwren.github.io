@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://wangwren.com/"/>
-  <updated>2019-11-30T06:10:13.573Z</updated>
+  <updated>2019-12-31T09:19:18.456Z</updated>
   <id>http://wangwren.com/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>写给2019</title>
+    <link href="http://wangwren.com/2019/12/%E5%86%99%E7%BB%992019/"/>
+    <id>http://wangwren.com/2019/12/写给2019/</id>
+    <published>2019-12-31T09:19:53.000Z</published>
+    <updated>2019-12-31T09:19:18.456Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote><p>能力配不上野心。</p></blockquote><p><img alt="2019年🐶菲来时候拍的故宫" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/DCA975EC-8051-427B-8701-B1883749CED0_1_105_c.jpeg" class="lozad"></p><h2 id="去年。"><a href="#去年。" class="headerlink" title="去年。"></a>去年。</h2><p><a href="http://wangwren.com/2018/12/2018%E6%80%BB%E7%BB%93/">2018总结</a>，最后写了2019的愿望。</p><ul><li style="list-style: none"><input type="checkbox" checked> 但愿2019年春节回来能找到一份满意的工作，留在北京，顺利完成毕设，顺利毕业。加油吧。</li><li style="list-style: none"><input type="checkbox"> 学习上坚持每天学习，每天阅读，继续学习基础知识，框架，合理分配好时间。</li><li style="list-style: none"><input type="checkbox" checked> 这个博客是前几天刚搭建的，用这个博客来记录自己的学习过程和生活，坚持下去。</li></ul><p>每天坚持学习，真的不是想的那么想的那么简单，我连每个月坚持学习都没做到。</p><h2 id="工作"><a href="#工作" class="headerlink" title="工作"></a>工作</h2><p>找到了一份Java工程师的工作。</p><p>在2019年2月25号，终于在北京找到了一份工作，当时还是很高兴的，以实习生的身份进的公司，七月份顺利毕业，在十月份已经顺利转正了。工作还算满意，自己确实有提升，同事也都非常好，但是我野心太大，现在有点不知足了。</p><p>2018年的时候，我说过月薪过万（税前）买mbp（我没写在2018的总结里），这个买Mac的愿望终于实现了，虽然前几天新出的16寸也很香）。</p><p>还买了别的，我是苹果脑残粉。（我就是想装b）<br><img alt="" data-src="https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/img/5F22D087-C465-4D5B-84A7-BF08BE490247_1_105_c.jpeg" class="lozad"></p><h2 id="学"><a href="#学" class="headerlink" title="学"></a>学</h2><p>这一年我的学习能力和去年比远比不上去年，去年可能因为找不到工作，每天焦虑烦躁，不得不学。</p><p>今年找到工作后，一段时间内还是有坚持学习的，但是远比不上去年。尤其是在11月份和12月份，更加堕落，下班回家后也学不进去了，周末在床上装死也不会起来学习。这种状态持续了一个半月，就在前几天才反应过来，自己没以前那么努力了。</p><h3 id="我的能力配不上我的野心。"><a href="#我的能力配不上我的野心。" class="headerlink" title="我的能力配不上我的野心。"></a>我的能力配不上我的野心。</h3><p>就在前几天自己闲着无聊想更新一下简历，想了半天，除了加上一段工作经历外，并没有更多要写的，而且没有亮点，简历上之前写到的技术现在忘的也差不多了。当时自己才清醒过来，自己这一年到底有进步吗。所以最近又开始规划学习。</p><h2 id="还是北京"><a href="#还是北京" class="headerlink" title="还是北京"></a>还是北京</h2><p>算一下来北京一年半了，北京好吗？好！但是，难！</p><p>这一年没什么大事，很累但很充实。</p><h2 id="2020"><a href="#2020" class="headerlink" title="2020"></a>2020</h2><ul><li>本命年好运</li><li>学理财</li><li>持续学习</li><li>执行力，想了一堆的提醒事项，并没完成</li></ul><p>想不到别的了，干就完了。</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;blockquote&gt;
+&lt;p&gt;能力配不上野心。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;img alt=&quot;2019年🐶菲来时候拍的故宫&quot; data-src=&quot;https://imagebed-1259286100.cos.ap-beijing.myqcloud.com/i
+      
+    
+    </summary>
+    
+    
+      <category term="生活" scheme="http://wangwren.com/tags/%E7%94%9F%E6%B4%BB/"/>
+    
+  </entry>
   
   <entry>
     <title>JVM内存模型</title>
@@ -466,29 +492,6 @@
       <category term="java" scheme="http://wangwren.com/tags/java/"/>
     
       <category term="Spring" scheme="http://wangwren.com/tags/Spring/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>数据库事务的特性以及隔离级别</title>
-    <link href="http://wangwren.com/2019/02/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BA%8B%E5%8A%A1%E7%9A%84%E7%89%B9%E6%80%A7%E4%BB%A5%E5%8F%8A%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB/"/>
-    <id>http://wangwren.com/2019/02/数据库事务的特性以及隔离级别/</id>
-    <published>2019-02-15T14:59:59.000Z</published>
-    <updated>2019-02-15T16:26:30.166Z</updated>
-    
-    <content type="html"><![CDATA[<h2 id="数据库事务的四大特性"><a href="#数据库事务的四大特性" class="headerlink" title="数据库事务的四大特性"></a>数据库事务的四大特性</h2><h3 id="原子性-Atomicity"><a href="#原子性-Atomicity" class="headerlink" title="原子性(Atomicity)"></a>原子性(Atomicity)</h3><p>原子性是指事务包含的所有操作<strong>要么全部成功，要么全部失败</strong>。因此事务的操作如果成功就必须要完全应用到数据库，如果操作失败则不能对数据库有任何影响。</p><h3 id="一致性-Consistency"><a href="#一致性-Consistency" class="headerlink" title="一致性(Consistency)"></a>一致性(Consistency)</h3><p>一致性是指事务必须使数据库<strong>从一个一致性状态变换到另一个一致性状态</strong>，也就是说一个事务执行之前和执行之后都必须处于一致性状态。  </p><p>拿转账举例，假设用户A和用户B两者的钱加起来一共是5000，那么不管A和B之间如何转账，转几次账，事务结束后两个用户的钱相加起来应该还得是5000，这就是事务的一致性。</p><h3 id="隔离性-Isolation"><a href="#隔离性-Isolation" class="headerlink" title="隔离性(Isolation)"></a>隔离性(Isolation)</h3><p>隔离性是当多个用户并发访问数据库时，比如操作同一张表时，<strong>数据库为每一个用户开启的事务，不能被其他事务的操作所干扰，多个并发事务之间要相互隔离。</strong>  </p><p>即要达到这一种效果：对于任意两个并发的事务T1和T2，在事务T1看来，T2要么在T1开始之前就已经结束，要么在T1结束之后才开始，这样每个事务都感觉不到有其他事务在并发地执行。</p><p><strong>对于事务的隔离性数据库提供了多种隔离级别</strong>，之后会提到。</p><h3 id="持久性-Durability"><a href="#持久性-Durability" class="headerlink" title="持久性(Durability)"></a>持久性(Durability)</h3><p>持久性是指<strong>一个事务一旦被提交了，那么对数据库中的数据的改变就是永久性的</strong>，即便是在数据库系统遇到故障的情况下也不会丢失提交事务的操作。</p><p>例如，在使用JDBC操作数据库时，在提交事务方法后，提示用户事务操作完成，当程序执行完成直到看到提示后，就可以认定事务已经正确提交，即使这时数据库出现了问题，也必须要将事务完全执行完成，否则就会造成我们看到提示事务处理完毕，但因数据库故障而没有执行事务的重大错误。</p><h2 id="隔离级别"><a href="#隔离级别" class="headerlink" title="隔离级别"></a>隔离级别</h2><p>以下说明事务的隔离性，当多个线程都开启事务操作数据库中数据时，数据库系统要进行隔离操作，以保证各个线程获取数据的准确性。</p><p>在介绍数据库提供的各种隔离级别之前，先看看<strong>如果不考虑事务的隔离性会发生的问题。</strong></p><ul><li>脏读<ul><li>脏读是指在一个事务处理过程里读取了另一个<strong>未提交的事务</strong>中的数据。</li><li>当一个事务正在多次修改某个数据，而在这个事务中这多次的修改都还未提交，这时一个并发的事务来访问该数据，就会造成两个事务得到的数据不一致。例如：用户A向用户B转账100元，对应sql如下：<ul><li><code>update account set money=money+100 where name=&#39;B&#39;;</code>(此时A通知B)</li><li><code>update account set money=money - 100 where name=&#39;A&#39;;</code></li></ul></li><li>当只执行第一条SQL时，A通知B查看账户，B发现确实钱已到账(此时即发生了脏读)，而后无论第二条SQL是否执行，只要该事务不提交，则所有操作都将回滚，那么当B以后再次查看账户时就会发现钱其实并没有转。</li></ul></li><li>不可重复读<ul><li>不可重复读是指在对于数据库中的某个数据，一个事务范围内多次查询却返回了不同的数据值，这是由于在查询间隔，<strong>被另一个事务修改并提交了。</strong></li><li>例如事务T1在读取某一数据，而事务T2立马修改了这个数据并提交事务给数据库，事务T1再次读取该数据就得到了不同的结果，发生了不可重复读。</li><li>不可重复读和脏读的区别是，脏读是某一事务读取了另一个事务未提交的脏数据，而不可重复读则是读取了前一事务提交的数据。</li></ul></li><li>虚读(幻读)<ul><li>幻读是事务非独立执行时发生的一种现象。</li><li>例如：事务T1对一个表中所有的行的某个数据项做了从”1”修改为”2”的操作，这时事务T2又对这个表中插入了一行数据项，而这个数据项的数值还是为”1”并且提交给数据库。而操作事务T1的用户如果再查看刚刚修改的数据，就会发现还有一行没有修改，其实这行是从事务T2添加的，就好像产生幻觉一样，这就是发生了幻读。</li></ul></li></ul><p>幻读和不可重复读都是读取了另一条已经提交的事务(这点与脏读不同)，所不同的是不可重复读查询的都是同一个数据项，而幻读针对的是一批数据整体(比如数据个数)。</p><h3 id="MySql四种隔离级别"><a href="#MySql四种隔离级别" class="headerlink" title="MySql四种隔离级别"></a>MySql四种隔离级别</h3><ul><li>Serializable(串行化)：可避免脏读、不可重复读、幻读的发生。</li><li>Repeatable read(可重复读)：可避免脏读、不可重复读的发生。</li><li>Read committed(读已提交)：可避免脏读的发生。</li><li>Read uncommitted(读未提交)：最低级别，任何情况都无法保证。</li></ul><p>以上四种隔离级别最高的是Serializable级别，最低的是Read uncommitted级别，当然级别越高，执行效率就越低。像Serializable这个几倍，就是以锁表的方式(类似于Java多线程中的锁)使得其他的线程只能在锁外等待，所以平时选用何种隔离级别应该根据实际情况。</p><p>在MySql数据中默认的隔离级别为Repeatable read(可重复读)。</p><p>在Oracle数据库中，只支持Serializable(串行化)级别和Read committed(读已提交)这两种级别，其中默认的为Read committed级别。</p><ul><li>在MySql中查看当前事务的隔离级别：</li></ul><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> @@tx_isolation;</span><br></pre></td></tr></table></figure><ul><li>在MySql中设置事务的隔离级别：</li></ul><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">set</span> [glogal | <span class="keyword">session</span>] <span class="keyword">transaction</span> <span class="keyword">isolation</span> <span class="keyword">level</span> 隔离级别名称;</span><br><span class="line"></span><br><span class="line"><span class="comment">--或者</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">set</span> tx_isolation=<span class="string">'隔离级别名称'</span>;</span><br></pre></td></tr></table></figure><p><strong>设置数据库的隔离级别一定要在开启事务之前！！！</strong></p><p>如果使用JDBC对数据库的事务设置隔离级别的话，也应该是在调用Connection对象的<code>setAutoCommit(false)</code>方法之前。调用Connection对象的<code>setTransactionIsolation(level)</code>即可设置当前链接的隔离级别，对于参数level，可以使用Connection对象的字段：</p><p><img alt="1550247635304" data-src="/2019/02/数据库事务的特性以及隔离级别/1.png" class="lozad"></p><p>在JDBC中设置隔离级别的部分代码：</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Connection conn = <span class="keyword">null</span>;</span><br><span class="line">Statement st = <span class="keyword">null</span>;</span><br><span class="line">ResultSet rs = <span class="keyword">null</span>;</span><br><span class="line"><span class="keyword">try</span>&#123;</span><br><span class="line">    conn = JdbcUtils.getConnection();</span><br><span class="line">    <span class="comment">//设置该链接的隔离级别</span></span><br><span class="line">    conn.setTransactionIsolation(Connection.TRANSACTION.SERIALIZABLE);</span><br><span class="line">    conn.setAutoCommit(<span class="keyword">false</span>); <span class="comment">//开启事务</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p><strong>隔离级别的设置只对当前链接有效。</strong>对于使用MySql命令窗口而言，一个窗口就相当于一个链接，当前窗口设置的隔离级别只对当前窗口中的事务有效；</p><p>对于JDBC操作数据库来说，一个Connection对象相当于一个链接，而对于Connection对象设置的隔离级别只对该Connection对象有效，与其他链接Connection对象无关。</p><p>参考博客：<a href="https://www.cnblogs.com/fjdingsd/p/5273008.html" target="_blank" rel="noopener">https://www.cnblogs.com/fjdingsd/p/5273008.html</a></p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;h2 id=&quot;数据库事务的四大特性&quot;&gt;&lt;a href=&quot;#数据库事务的四大特性&quot; class=&quot;headerlink&quot; title=&quot;数据库事务的四大特性&quot;&gt;&lt;/a&gt;数据库事务的四大特性&lt;/h2&gt;&lt;h3 id=&quot;原子性-Atomicity&quot;&gt;&lt;a href=&quot;#原子性-Atom
-      
-    
-    </summary>
-    
-    
-      <category term="数据库" scheme="http://wangwren.com/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
     
   </entry>
   
